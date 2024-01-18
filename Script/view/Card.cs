@@ -11,10 +11,7 @@ namespace Script.view
     {
         [HideInInspector]
         public RectTransform rectTransform;
-        public RectTransform battleField;
-
-        public RectTransform 抽牌堆;
-        public RectTransform 弃牌堆;
+        private RectTransform 施法区域;
         //原始的旋转
         [HideInInspector]
         public Vector3 rotate;
@@ -45,11 +42,12 @@ namespace Script.view
 
         #region 一些动画属性
         //放大时向上移动的距离
-        private float enterUpDistance = 200;
+        private readonly float enterUpDistance = 3;
         
         #endregion
         private void Awake()
         {
+            施法区域 = GameObject.Find("施法区域").GetComponent<RectTransform>();
             rectTransform = GetComponent<RectTransform>();
             _shine = transform.Find("Shine");
             mainCamera = Camera.main;
@@ -61,11 +59,12 @@ namespace Script.view
             toBigModeTween = DOTween.Sequence();
             backToOriginPosTween = DOTween.Sequence();
             
+            
             toBigModeTween
                 .Join(transform.DOScale(originScale*1.5f, 0.3f))
                 .Join(DOTween.To(() => rectTransform.anchoredPosition,
                     value => rectTransform.anchoredPosition = value,
-                    originAnchoredPos + new Vector2(0, enterUpDistance), 0.2f))
+                    originAnchoredPos + new Vector2(0, enterUpDistance*transform.localScale.x), 0.2f))// 乘scale.x可以保持移动比例
                 .Pause()
                 .SetAutoKill(false);
 

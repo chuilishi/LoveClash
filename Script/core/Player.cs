@@ -16,14 +16,9 @@ namespace Script.core
             this.playerView = playerView;
         }
         
-        public List<Card> DrawCard(int num)
+        public Card DrawCard()
         {
-            var list = new List<Card>();
-            for (int i = 0; i < num; i++)
-            {
-                list.Add(deck.DrawCard());
-            }
-            return list;
+            return deck.DrawCard();
         }
     }
 }

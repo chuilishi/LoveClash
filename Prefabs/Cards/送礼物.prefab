@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2751426941281561575}
   - component: {fileID: 6950016624629814805}
   m_Layer: 5
-  m_Name: OriginCard 1
+  m_Name: "\u9001\u793C\u7269"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

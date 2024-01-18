@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using EasyButtons;
 using TMPro;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace Script.view
         public TMP_Text 心动值;
         public TMP_Text 上头值;
         public TMP_Text 信任值;
+        [Header("卡牌的出生位置")]
         public Transform cardInitPos;
         private List<Vector3> handCardPoses = new List<Vector3>();
         private Transform cardsParent;
@@ -29,13 +31,15 @@ namespace Script.view
 
         private void Start()
         {
-            centerOfCircle = midPos.position - new Vector3(0, 100f, 0);
+            centerOfCircle = midPos - new Vector3(0, 100f, 0);
         }
-
+        [Button]
         public void DrawCard(int num)
         {
-            foreach (var card in player.DrawCard(num))
+            for (int i = 0; i < num; i++)
             {
+                var card = player.DrawCard();
+                if(card==null)break;
                 handCards.Add(card.cardView);
             }
             AdjustPos();
@@ -43,7 +47,7 @@ namespace Script.view
         //anchoredPosition为单位的间隔
         private float interval = 50f;
         [Header("手牌中心位置")]
-        public RectTransform midPos;
+        public Vector3 midPos;
         //卡牌有略微旋转,手牌在手中是在一个圆弧上,此为圆心
         private Vector3 centerOfCircle;
         private void AdjustPos()

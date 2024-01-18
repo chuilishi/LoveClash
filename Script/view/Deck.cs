@@ -11,18 +11,14 @@ namespace Script.view
     {
         public core.Deck deck;
         //卡组
-        public CardSO cardSo;
+        [FormerlySerializedAs("cardSo")] public CardGroupSO cardGroupSo;
         public List<Card> curCards;
         private void Awake()
         {
-            curCards = cardSo.cards.Select((i)=>
+            foreach (var card in cardGroupSo.cards)
             {
-                var card = CardFactory.GetCard(i);
-                deck.curCards.Add(card.card);
-                card.transform.parent = transform;
-                card.transform.position = transform.position;
-                return card;
-            }).ToList();
+                 curCards.Add(Instantiate(card, transform.position, Quaternion.identity, transform));
+            }
             deck.Init(this);
         }
         public Card DrawCard()
