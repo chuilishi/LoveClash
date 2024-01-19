@@ -15,10 +15,14 @@ namespace Script.view
         public List<Card> curCards;
         private void Awake()
         {
+            deck = new core.Deck();
             foreach (var card in cardGroupSo.cards)
             {
                  curCards.Add(Instantiate(card, transform.position, Quaternion.identity, transform));
             }
+        }
+        private void Start()
+        {
             deck.Init(this);
         }
         public Card DrawCard()

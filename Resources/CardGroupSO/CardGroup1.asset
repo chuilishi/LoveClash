@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: CardGroup1
   m_EditorClassIdentifier: 
   cards:
-  - {fileID: 2751426941281561575, guid: 5175216b13de39a46abfdc43f61b563b, type: 3}
-  - {fileID: 2751426941281561575, guid: 2c307db024661874d8abe4688f26e4e7, type: 3}
+  - {fileID: 2751426941281561575, guid: 7bc4da60246c9e042b62829e235a87fd, type: 3}
+  - {fileID: 2751426941281561575, guid: b6267dd6732709e4bbe231595b282cfa, type: 3}

@@ -17,10 +17,8 @@ namespace Script.view
         public Vector3 rotate;
         //原始的RectTransform.AnchoredPosition
         [HideInInspector]
-        public Vector2 originAnchoredPos;
+        public Vector3 originPos;
 
-        private Vector3 originScale;
-        
         public core.Card card;
 
         public Sequence toBigModeTween;
@@ -42,7 +40,7 @@ namespace Script.view
 
         #region 一些动画属性
         //放大时向上移动的距离
-        private readonly float enterUpDistance = 3;
+        private readonly float enterUpDistance = 200;
         
         #endregion
         private void Awake()
@@ -51,38 +49,17 @@ namespace Script.view
             rectTransform = GetComponent<RectTransform>();
             _shine = transform.Find("Shine");
             mainCamera = Camera.main;
-            originAnchoredPos = rectTransform.anchoredPosition;
-            originScale = transform.localScale;
-            
-            #region 定义四个MTweener
-            
-            toBigModeTween = DOTween.Sequence();
-            backToOriginPosTween = DOTween.Sequence();
-            
-            
-            toBigModeTween
-                .Join(transform.DOScale(originScale*1.5f, 0.3f))
-                .Join(DOTween.To(() => rectTransform.anchoredPosition,
-                    value => rectTransform.anchoredPosition = value,
-                    originAnchoredPos + new Vector2(0, enterUpDistance*transform.localScale.x), 0.2f))// 乘scale.x可以保持移动比例
-                .Pause()
-                .SetAutoKill(false);
+            rectTransform = GetComponent<RectTransform>();
+            _shine = transform.Find("Shine");
+        }
 
-            backToOriginPosTween
-                .Join(transform.DOScale(originScale, 0.3f))
-                .Join(DOTween.To(() => rectTransform.anchoredPosition,
-                    value => rectTransform.anchoredPosition = value,
-                    originAnchoredPos, 0.2f))
-                .Pause()
-                .SetAutoKill(false);
-
-            #endregion
+        private void Start()
+        {
+            originPos = transform.position;
         }
 
         public void Init()
         {
-            rectTransform = GetComponent<RectTransform>();
-            _shine = transform.Find("Shine");
         }
         
         #region 一些事件函数
@@ -91,13 +68,23 @@ namespace Script.view
             if (!active) return;
             if (_bigMode) return;
             DOTween.Sequence()
-                .Join(transform.DOScale(originScale * 1.5f, 0.3f))
-                .Join(DOTween.To(() => rectTransform.anchoredPosition,
-                    value => rectTransform.anchoredPosition = value,
-                    originAnchoredPos + new Vector2(0, enterUpDistance), 0.2f));
+                .Join(transform.DOScale(Vector3.one*1.5f, 0.3f))
+                .Join(DOTween.To(() => transform.position,
+                    value => transform.position = value,
+                    originPos + new Vector3(0, Screen.height*0.125f,0), 0.2f));
             _bigMode = true;
         }
-
+        //设置并回到原位置
+        public void ResetPosition(Vector3? position = null)
+        {
+            if (position != null)originPos = position.GetValueOrDefault();
+            DOTween.Sequence()
+                .Join(transform.DOScale(Vector3.one,0.3f))
+                .Join(DOTween.To(() => transform.position,
+                    value => transform.position = value,
+                    originPos, 0.2f)).Play();
+        }
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!active) return;
@@ -117,11 +104,7 @@ namespace Script.view
             if(!active)return;
             if (!_bigMode) return;
             _bigMode = false;
-            DOTween.Sequence()
-                .Join(transform.DOScale(originScale, 0.3f))
-                .Join(DOTween.To(() => rectTransform.anchoredPosition,
-                    value => rectTransform.anchoredPosition = value,
-                    originAnchoredPos, 0.2f));
+            ResetPosition();
         }
         #endregion
     }
