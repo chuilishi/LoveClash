@@ -1,27 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Script.Cards;
+using Script.Manager;
+using UnityEngine;
 
 namespace Script.core
 {
-    public class Deck
+    public class Deck : MonoBehaviour
     {
-        private List<Card> cards;
-        private view.Deck deckView;
+        public List<Card> cards;
         public static Deck instance;
 
-        public Deck(List<Card> cards,view.Deck deckView)
+        private void Awake()
         {
             instance = this;
-            this.cards = cards;
-            this.deckView = deckView;
         }
+        private void Start()
+        {
+            for (var i = 0; i < cards.Count; i++)
+            {
+                cards[i] = Instantiate(cards[i], UIManager.instance.CardsParent);
+            }
+        }
+
         public Card DrawCard()
         {
             if(cards.Count==0)return null;
             var card = cards[0];
-            deckView.DrawCard(card);
             cards.RemoveAt(0);
             return card;
         }

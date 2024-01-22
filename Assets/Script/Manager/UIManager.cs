@@ -25,14 +25,13 @@ namespace Script.Manager
         [Header("卡牌的父物体")] public Transform CardsParent;
         [Header("施法区域")] public Image battleField;
         [Header("正在连接中")] public Image 正在连接中;
+        [FormerlySerializedAs("cardView")] [Header("通用卡面")] public CardView cardViewView;
         #endregion
 
         #region 一些核心引用
-
+        
         public Player player;
         public Opponent opponent;
-        public Deck deck;
-
         #endregion
         
         private void Awake()

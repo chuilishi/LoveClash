@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EasyButtons;
+using Script.Manager;
+using UnityEngine;
+
 namespace Script.core
 {
-    public class Player
+    public class Player : MonoBehaviour
     {
         public static Player instance;
-        public Deck deck;
         public List<Cards.Card> handCards;
-        public view.Player playerView;
-        
+        [SerializeField]
         private int _心动值;
+        [SerializeField]
         private int _信任值;
+        [SerializeField]
         private int _上头值;
         
         public int 心动值
@@ -26,7 +30,7 @@ namespace Script.core
                 else
                 {
                     _心动值 = value;
-                    playerView.心动值.text = value.ToString();
+                    UIManager.instance.player.心动值.text = value.ToString();
                 }
             }
         }
@@ -42,7 +46,7 @@ namespace Script.core
                 else
                 {
                     _信任值 = value;
-                    playerView.信任值.text = value.ToString();
+                    UIManager.instance.player.信任值.text = value.ToString();
                 }
             }
         }
@@ -58,18 +62,9 @@ namespace Script.core
                 else
                 {
                     _上头值 = value;
-                    playerView.上头值.text = value.ToString();
+                    UIManager.instance.player.上头值.text = value.ToString();
                 }
             }
-        }
-        public void Init(view.Player playerView,Deck deck,(int,int,int) 心动信任上头值)
-        {
-            instance = this;
-            this.playerView = playerView;
-            this.deck = deck;
-            心动值 = 心动信任上头值.Item1;
-            信任值 = 心动信任上头值.Item2;
-            上头值 = 心动信任上头值.Item3;
         }
         
         public void GameStart()
@@ -82,17 +77,17 @@ namespace Script.core
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public List<Cards.Card> DrawCard(int num = 1)
+        [Button]
+        public void DrawCard()
         {
-            List<Cards.Card> cards = new ();
-            for (int i = 0; i < num; i++)
+            var card = Deck.instance.DrawCard();
+            if (card == null)
             {
-                var card = deck.DrawCard();
-                if(card==null)break;
-                cards.Add(card);
+                Debug.Log("没牌了");
+                return;
             }
-            playerView.DrawCard(cards);
-            return cards;
+            handCards.Add(card);
+            UIManager.instance.player.DrawCard(card);
         }
         /// <summary>
         /// 抽指定Index, 0代表数组中最后一张牌(即实际牌堆顶的第一张)
@@ -102,7 +97,7 @@ namespace Script.core
         /// <returns></returns>
         public List<Cards.Card> DrawCard(List<int>indexes)
         {
-            return deck.DrawCard(indexes);
+            return Deck.instance.DrawCard(indexes);
         }
     }
 }

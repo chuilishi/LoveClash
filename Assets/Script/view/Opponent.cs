@@ -24,7 +24,6 @@ namespace Script.view
             心动值 = transform.Find("心动值/心动值Text").gameObject.GetComponent<TextMeshProUGUI>();
             上头值 = transform.Find("上头值/上头值Text").gameObject.GetComponent<TextMeshProUGUI>();
             信任值 = transform.Find("信任值/信任值Text").gameObject.GetComponent<TextMeshProUGUI>();
-            opponent = new core.Opponent(this,(10,10,10));
         }
     }
 }

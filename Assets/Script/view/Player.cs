@@ -11,12 +11,8 @@ namespace Script.view
 {
     public class Player : MonoBehaviour
     {
-        public core.Player player;
-        public Deck deckView;
+        private List<CardView> handCards = new List<CardView>();
         
-        private List<Card> handCards = new List<Card>();
-
-
         public int _心动值_ = 10;
         public int _信任值_ = 10;
         public int _上头值_ = 10;
@@ -29,20 +25,10 @@ namespace Script.view
         public TMP_Text 上头值;
         private void Awake()
         {
-            player = new core.Player();
             UIManager.instance.player = this;
             心动值 = transform.Find("心动值/心动值Text").gameObject.GetComponent<TextMeshProUGUI>();
             上头值 = transform.Find("上头值/上头值Text").gameObject.GetComponent<TextMeshProUGUI>();
             信任值 = transform.Find("信任值/信任值Text").gameObject.GetComponent<TextMeshProUGUI>();
-        }
-        private void Start()
-        {
-            player.Init(this,deckView.deck,(_心动值_,_信任值_,_上头值_));
-        }
-        [Button]
-        public void DrawCard()
-        {
-            player.DrawCard();
         }
         /// <summary>
         /// 抽Cards.Card入手牌
@@ -61,18 +47,13 @@ namespace Script.view
             }
             AdjustPos();
         }
-        //anchoredPosition为单位的间隔
-        private float interval;
-        private void AdjustPos()
+
+        public void DrawCard(Cards.Card card)
         {
             try
             {
-                if (handCards.Count == 0) return;
-                for (int i = 0; i < handCards.Count; i++)
-                {
-                    var minus = i - (handCards.Count-1)/2f;
-                    handCards[i].ResetPosition(new Vector3(minus*UIManager.instance.cardInterval+UIManager.instance.centerCardPivot.position.x,UIManager.instance.centerCardPivot.position.y));
-                }
+                handCards.Add(card.cardView);
+                AdjustPos();
             }
             catch (Exception e)
             {
@@ -80,6 +61,17 @@ namespace Script.view
                 throw;
             }
             
+        }
+        //anchoredPosition为单位的间隔
+        private float interval;
+        private void AdjustPos()
+        {
+            if (handCards.Count == 0) return;
+            for (int i = 0; i < handCards.Count; i++)
+            {
+                var minus = i - (handCards.Count-1)/2f;
+                handCards[i].ResetPosition(new Vector3(minus*UIManager.instance.cardInterval+UIManager.instance.centerCardPivot.position.x,UIManager.instance.centerCardPivot.position.y));
+            }
         }
     }
 }

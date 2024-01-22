@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 namespace Script.view
 {
     [RequireComponent(typeof(InputHandler))]
-    public class Card : MonoBehaviour,IMPointerEnterHandler,IMBeginDragHandler,IMDragHandler,IMEndDragHandler,IMPointerExitHandler
+    public class CardView : MonoBehaviour,IMPointerEnterHandler,IMBeginDragHandler,IMDragHandler,IMEndDragHandler,IMPointerExitHandler
     {
         [HideInInspector]
         public RectTransform rectTransform;
@@ -19,8 +19,6 @@ namespace Script.view
         //原始的RectTransform.AnchoredPosition
         [HideInInspector]
         public Vector3 originPos;
-
-        public Cards.Card card;
         //代表卡的编号
         [SerializeField] public int cardCode;
         public Sequence toBigModeTween;
@@ -53,9 +51,6 @@ namespace Script.view
             mainCamera = Camera.main;
             rectTransform = GetComponent<RectTransform>();
             _shine = transform.Find("Shine");
-            //创建card实例
-            card = (Cards.Card)Activator.CreateInstance(CardFactory.instance.cards[cardCode].Type,new object[]{this});
-            // card.cardView = this;
         }
         private void Start()
         {

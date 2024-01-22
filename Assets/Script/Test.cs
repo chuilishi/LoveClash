@@ -8,7 +8,6 @@ using Script.core;
 using Script.Utility;
 using UnityEditor;
 using UnityEngine;
-using Card = Script.view.Card;
 
 namespace Script
 {
@@ -17,7 +16,7 @@ namespace Script
         public Card cardView;
         private void Awake()
         {
-            
+            Debug.Log(cardView.GetType());
         }
     }
 }

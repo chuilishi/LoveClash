@@ -1,13 +1,17 @@
 ﻿using System;
+using Script.Manager;
+using UnityEngine;
 
 namespace Script.core
 {
-    public class Opponent
+    public class Opponent : MonoBehaviour
     {
         public static Opponent instance;
-        public view.Opponent opponentView;
+        [SerializeField]
         private int _心动值 = 10;
+        [SerializeField]
         private int _信任值 = 10;
+        [SerializeField]
         private int _上头值 = 10;
         public int 心动值
         {
@@ -21,7 +25,7 @@ namespace Script.core
                 else
                 {
                     _心动值 = value;
-                    opponentView.心动值.text = value.ToString();
+                    UIManager.instance.opponent.心动值.text = value.ToString();
                 }
             }
         }
@@ -37,7 +41,7 @@ namespace Script.core
                 else
                 {
                     _信任值 = value;
-                    opponentView.信任值.text = value.ToString();
+                    UIManager.instance.opponent.信任值.text = value.ToString();
                 }
             }
         }
@@ -53,17 +57,9 @@ namespace Script.core
                 else
                 {
                     _上头值 = value;
-                    opponentView.上头值.text = value.ToString();
+                    UIManager.instance.opponent.上头值.text = value.ToString();
                 }
             }
-        }
-        public Opponent(view.Opponent opponentView,(int,int,int) 心动上头信任值)
-        {
-            this.opponentView = opponentView;
-            instance = this;
-            心动值 = 心动上头信任值.Item1;
-            上头值 = 心动上头信任值.Item2;
-            信任值 = 心动上头信任值.Item3;
         }
     }
 }
