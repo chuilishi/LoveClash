@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 namespace Script.core
 {
@@ -8,10 +9,59 @@ namespace Script.core
         public Deck deck;
         public List<Cards.Card> handCards;
         public view.Player playerView;
-        public int 心动值;
-        public int 信任值;
-        public int 上头值;
-
+        
+        private int _心动值;
+        private int _信任值;
+        private int _上头值;
+        
+        public int 心动值
+        {
+            get => _心动值;
+            set
+            {
+                if (value > 99)
+                {
+                    throw new Exception("心动值太大");
+                }
+                else
+                {
+                    _心动值 = value;
+                    playerView.心动值.text = value.ToString();
+                }
+            }
+        }
+        public int 信任值
+        {
+            get => _信任值;
+            set
+            {
+                if (value > 99)
+                {
+                    throw new Exception("信任值太大");
+                }
+                else
+                {
+                    _信任值 = value;
+                    playerView.信任值.text = value.ToString();
+                }
+            }
+        }
+        public int 上头值
+        {
+            get => _上头值;
+            set
+            {
+                if (value > 99)
+                {
+                    throw new Exception("上头值太大");
+                }
+                else
+                {
+                    _上头值 = value;
+                    playerView.上头值.text = value.ToString();
+                }
+            }
+        }
         public void Init(view.Player playerView,Deck deck,(int,int,int) 心动信任上头值)
         {
             instance = this;
@@ -21,6 +71,12 @@ namespace Script.core
             信任值 = 心动信任上头值.Item2;
             上头值 = 心动信任上头值.Item3;
         }
+        
+        public void GameStart()
+        {
+            DrawCard();
+        }
+        
         /// <summary>
         /// 抽n张卡
         /// </summary>

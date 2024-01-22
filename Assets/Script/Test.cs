@@ -8,14 +8,16 @@ using Script.core;
 using Script.Utility;
 using UnityEditor;
 using UnityEngine;
+using Card = Script.view.Card;
 
 namespace Script
 {
     public class Test : MonoBehaviour
     {
+        public Card cardView;
         private void Awake()
         {
-            Debug.Log("Awake");
+            
         }
     }
 }

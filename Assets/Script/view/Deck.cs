@@ -23,6 +23,7 @@ namespace Script.view
                 list.Add(cardView.card);
             }
             deck = new core.Deck(list,this);
+            UIManager.instance.deck = this;
         }
         private void Start()
         {

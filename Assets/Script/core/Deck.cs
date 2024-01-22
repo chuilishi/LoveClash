@@ -9,9 +9,11 @@ namespace Script.core
     {
         private List<Card> cards;
         private view.Deck deckView;
+        public static Deck instance;
 
         public Deck(List<Card> cards,view.Deck deckView)
         {
+            instance = this;
             this.cards = cards;
             this.deckView = deckView;
         }

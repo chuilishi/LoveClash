@@ -11,25 +11,33 @@ namespace Script.view
 {
     public class Player : MonoBehaviour
     {
-        public static Player instance;
         public core.Player player;
         public Deck deckView;
         
         private List<Card> handCards = new List<Card>();
-        private TMP_Text 心动值;
-        private TMP_Text 信任值;
-        private TMP_Text 上头值;
+
+
+        public int _心动值_ = 10;
+        public int _信任值_ = 10;
+        public int _上头值_ = 10;
+        
+        [HideInInspector]
+        public TMP_Text 心动值;
+        [HideInInspector]
+        public TMP_Text 信任值;
+        [HideInInspector]
+        public TMP_Text 上头值;
         private void Awake()
         {
             player = new core.Player();
-            instance = this;
+            UIManager.instance.player = this;
             心动值 = transform.Find("心动值/心动值Text").gameObject.GetComponent<TextMeshProUGUI>();
             上头值 = transform.Find("上头值/上头值Text").gameObject.GetComponent<TextMeshProUGUI>();
             信任值 = transform.Find("信任值/信任值Text").gameObject.GetComponent<TextMeshProUGUI>();
         }
         private void Start()
         {
-            player.Init(this,deckView.deck,(int.Parse(心动值.text),int.Parse(信任值.text),int.Parse(上头值.text)));
+            player.Init(this,deckView.deck,(_心动值_,_信任值_,_上头值_));
         }
         [Button]
         public void DrawCard()
@@ -63,7 +71,7 @@ namespace Script.view
                 for (int i = 0; i < handCards.Count; i++)
                 {
                     var minus = i - (handCards.Count-1)/2f;
-                    handCards[i].ResetPosition(new Vector3(minus*UIManager.instance.cardInterval+UIManager.instance.CenterCardPivot.position.x,UIManager.instance.CenterCardPivot.position.y));
+                    handCards[i].ResetPosition(new Vector3(minus*UIManager.instance.cardInterval+UIManager.instance.centerCardPivot.position.x,UIManager.instance.centerCardPivot.position.y));
                 }
             }
             catch (Exception e)
