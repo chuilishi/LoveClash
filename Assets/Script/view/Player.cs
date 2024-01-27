@@ -23,6 +23,7 @@ namespace Script.view
         public TMP_Text 信任值;
         [HideInInspector]
         public TMP_Text 上头值;
+        
         private void Awake()
         {
             UIManager.instance.player = this;
@@ -30,6 +31,7 @@ namespace Script.view
             上头值 = transform.Find("上头值/上头值Text").gameObject.GetComponent<TextMeshProUGUI>();
             信任值 = transform.Find("信任值/信任值Text").gameObject.GetComponent<TextMeshProUGUI>();
         }
+        
         /// <summary>
         /// 抽Cards.Card入手牌
         /// </summary>
@@ -47,7 +49,7 @@ namespace Script.view
             }
             AdjustPos();
         }
-
+        
         public void DrawCard(Cards.Card card)
         {
             try
@@ -60,8 +62,8 @@ namespace Script.view
                 Console.WriteLine(e);
                 throw;
             }
-            
         }
+        
         //anchoredPosition为单位的间隔
         private float interval;
         private void AdjustPos()

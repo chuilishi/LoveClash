@@ -52,6 +52,7 @@ namespace Script.view
             rectTransform = GetComponent<RectTransform>();
             _shine = transform.Find("Shine");
         }
+        
         private void Start()
         {
             originPos = transform.position;

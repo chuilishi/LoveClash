@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Script.core;
+using Script.Network;
 
 namespace Script.Cards
 {
@@ -8,13 +10,15 @@ namespace Script.Cards
     /// 上头值+1
     /// </summary>
     [Serializable]
-    [Guid("2A711325-154C-C67F-432E-66500D0453C3")]
     public class 喷香水 : Card
     {
         public 喷香水() : base(){}
-        public override void Execute(Card target = null)
+
+        public override void Execute(List<NetworkObject> targets = null)
         {
             Player.instance.上头值++;
+            NetworkManager.Execute(new Operation(OperationType.Card, NetworkManager.instance.playerEnum, this,
+                targets));
         }
     }
 }

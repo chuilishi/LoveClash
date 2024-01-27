@@ -1,5 +1,6 @@
 ﻿using System;
 using Script.view;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -24,7 +25,7 @@ namespace Script.Manager
 
         [Header("卡牌的父物体")] public Transform CardsParent;
         [Header("施法区域")] public Image battleField;
-        [Header("正在连接中")] public Image 正在连接中;
+        [FormerlySerializedAs("正在连接中")] [Header("正在连接中")] public TMP_Text 通知板;
         [FormerlySerializedAs("cardView")] [Header("通用卡面")] public CardView cardViewView;
         #endregion
 
@@ -38,7 +39,7 @@ namespace Script.Manager
         {
             instance = this;
             cardInterval = Screen.width * 0.1f;
-            正在连接中.enabled = false;
+            通知板.enabled = false;
             DontDestroyOnLoad(gameObject);
         }
     }

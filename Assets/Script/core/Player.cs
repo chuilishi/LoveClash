@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using EasyButtons;
+using Script.Cards;
 using Script.Manager;
+using Script.Network;
 using UnityEngine;
 
 namespace Script.core
@@ -11,6 +14,9 @@ namespace Script.core
     {
         public static Player instance;
         public List<Cards.Card> handCards;
+        public PlayerEnum playerEnum;
+        #region 三个值
+
         [SerializeField]
         private int _心动值;
         [SerializeField]
@@ -66,12 +72,25 @@ namespace Script.core
                 }
             }
         }
+
+        #endregion
         
         public void GameStart()
         {
             DrawCard();
         }
+
+        #region 打牌
+
+        public async UniTask PlayCard(Card card,List<NetworkObject> targets)
+        {
+            
+        }
+
+        #endregion
         
+        #region 抽卡
+
         /// <summary>
         /// 抽n张卡
         /// </summary>
@@ -99,5 +118,8 @@ namespace Script.core
         {
             return Deck.instance.DrawCard(indexes);
         }
+
+        #endregion
+        
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Script.core;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
@@ -7,10 +9,10 @@ using UnityEngine.UI;
 namespace Script.Cards
 {
     [Serializable]
-    public abstract class Card : MonoBehaviour
+    public abstract class Card : NetworkObject
     {
         public Sprite cardImage;
-        [FormerlySerializedAs("cardViewView")] [HideInInspector]
+        [HideInInspector]
         public view.CardView cardView;
 
         private void Awake()
@@ -20,6 +22,6 @@ namespace Script.Cards
             transform.Find("Picture").GetComponent<Image>().sprite = cardImage;
         }
 
-        public abstract void Execute(Card target = null);
+        public abstract void Execute(List<NetworkObject> targets = null);
     }
 }
