@@ -4,6 +4,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Script.Cards;
 using Script.Manager;
+using Script.Network;
 using UnityEngine;
 
 namespace Script.core
@@ -16,15 +17,21 @@ namespace Script.core
         private void Awake()
         {
             instance = this;
-        }
-        private void Start()
-        {
-            for (var i = 0; i < cards.Count; i++)
+            GameManager.instance.GameStart.AddListener((() =>
             {
-                cards[i] = Instantiate(cards[i], UIManager.instance.CardsParent);
-            }
+                for (var i = 0; i < cards.Count; i++)
+                {
+                    var o = NetworkManager.InstantiateNetworkObject(cards[i].name);
+                    var i1 = i;
+                    o.GetAwaiter().OnCompleted(() =>
+                    {
+                        o.GetAwaiter().GetResult().transform.SetParent(UIManager.instance.CardsParent);
+                        if(o.GetAwaiter().GetResult().GetComponent<Card>()==null) Debug.LogError("没有名叫 "+cards[i1].name+" 的卡");
+                        cards[i1] = o.GetAwaiter().GetResult().GetComponent<Card>();
+                    });
+                }
+            }));
         }
-
         public Card DrawCard()
         {
             if(cards.Count==0)return null;

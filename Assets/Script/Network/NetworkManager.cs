@@ -4,14 +4,16 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using EasyButtons;
 using Script.core;
 using Script.Manager;
+using TMPro;
+using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEngine;
-using Object = System.Object;
 
 
 namespace Script.Network
@@ -32,29 +34,25 @@ namespace Script.Network
         private static NetworkStream stream;
         public int roomId = 00000;
         public string userName = "Admin";
+        #if UNITY_EDITOR
+        public static bool quit = false;
+        #endif
         
         public static NetworkManager instance;
         
-        public static Dictionary<int,NetworkObject> networkObjectDict = new();
         public static Dictionary<int,NetworkObject> networkObjects = new();
 
-        private OperationExecutor operationExecutor;
-
-        private List<string> operations = new List<string>();
-
-        private static int operationCount = 0;
-
-        public static bool isSync = true;
+        private List<Operation> operations = new List<Operation>();
         
-        [HideInInspector]
-        public PlayerEnum playerEnum;
+        public static PlayerEnum playerEnum = PlayerEnum.NotReady;
+
+        private static CancellationTokenSource receiverCts = new CancellationTokenSource();
 
         private async void Awake()
         {
             instance = this;
             m_IPAddress = IPAddress;
             m_port = port;
-            operationExecutor = GetComponent<OperationExecutor>();
             //第一次连接 发送房间号
             Init();
         }
@@ -64,90 +62,93 @@ namespace Script.Network
         }
         
         #region 持续接收message并交给Executor执行
-
         private async void Init()
         {
-            await Connect();
+            Connect();
+            await UniTask.WaitUntil((() => client.Connected));
             stream = client.GetStream();
+            var s = await Request(JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: roomId.ToString())));
+            Debug.Log(s);
+            var operation = JsonUtility.FromJson<Operation>(s);
+            if (operation.operationType == OperationType.TryConnectRoom)
+            {
+                if (operation.playerEnum == PlayerEnum.Player1)
+                {
+                    playerEnum = PlayerEnum.Player1;
+                    //等玩家2进入
+                    operation = JsonUtility.FromJson<Operation>(await ReceiveAsync());
+                }
+                else
+                {
+                    playerEnum = PlayerEnum.Player2;
+                }
+                
+            }
+            //第二个信息是Init(两次,一次自己一次对手的) 名字(extraMessage) 和 PlayerPrefab(baseNetworkObject)//TODO 暂时没有角色
+            var opponentName = "";
+            var initStr = await ReceiveAsync();
+            operation = JsonUtility.FromJson<Operation>(initStr);
+            if (operation.playerEnum != playerEnum)
+            {
+                opponentName = operation.extraMessage;
+            }
+            
+            initStr = await ReceiveAsync();
+            operation = JsonUtility.FromJson<Operation>(initStr);
+            if (operation.playerEnum != playerEnum)
+            {
+                opponentName = operation.extraMessage;
+            }
+            UIManager.instance.通知板.gameObject.SetActive(true);
+            UIManager.instance.通知板.GetComponentInChildren<TMP_Text>().text = "你的对手是 " + opponentName;
+            UniTask.Delay(3000).GetAwaiter().OnCompleted((() =>
+            {
+                UIManager.instance.通知板.gameObject.SetActive(false);
+            }));
             Receiver();
-            SendAsync(JsonUtility.ToJson(new Operation(OperationType.CreateRoom, extraMessage: roomId.ToString())));
         }
+        /// <summary>
+        /// 主要消息接收器
+        /// </summary>
         public async void Receiver()
         {
             while (true)
             {
+                //对方回合开始时 , 取消的token被重新设置
+                await UniTask.WaitUntil((() => receiverCts.Token.IsCancellationRequested == false));
+                string resp = "";
                 try
                 {
-                    string resp = await ReceiveAsync();
-                    operations.Add(resp);
-                    var fromJson = JsonUtility.FromJson<Operation>(resp);
-                    if (fromJson.playerEnum != playerEnum) operationCount++;
-                    OperationExecutor.Execute(resp);
-                    if (operations.Count == operationCount) isSync = true;
+                    resp = await ReceiveAsync();
                 }
-                catch (Exception e)
+                catch (TaskCanceledException e)
                 {
-                    Debug.Log("Receiver Error "+e);
-                    await Connect();
                     continue;
                 }
+                var fromJson = JsonUtility.FromJson<Operation>(resp);
+                if(fromJson.recordable) operations.Add(fromJson);
+                OperationExecutor.Execute(fromJson);
             }
         }
-
-        
         #endregion
         #region NetworkObject相关
-
+        
         public static NetworkObject GetObjectById(int id)
         {
-            if (id >= networkObjects.Count)
-            {
-                Debug.Log("Invalid Id");
-                return null;
-            }
-            return networkObjectDict[id];
+            networkObjects.TryGetValue(id,out var networkObject);
+            return networkObject;
         }
-
-        
-        public static void AddObject(NetworkObject networkObject,int customId = -1)
-        {
-            if (customId != -1)
-            {
-                try
-                {
-                    networkObjects.Add(customId,networkObject);
-                }
-                catch (Exception e)
-                {
-                    networkObjects[customId] = networkObject;
-                }
-                
-            }
-            else if (networkObject.networkId == 0)
-            {
-                Debug.LogError("networkId 添加时不能为0");
-            }
-            networkObjects.Add(networkObject.networkId,networkObject);
-        }
-
         /// <summary>
-        /// 代替Instantiate
+        /// 本地创建NetworkObject, 代替Instantiate
         /// </summary>
-        /// <param name="name"></param>
-        public static NetworkObject CreateNewNetworkObject(string name,int id=-1)
+        public static async UniTask<NetworkObject> InstantiateNetworkObject(string name)
         {
-            try
-            {
-                var o = Instantiate(ObjectFactory.instance.nameToObject[name]);
-                o.networkId = networkObjects.Count;
-                AddObject(o,id);
-                return o;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("name error "+e);
-                throw;
-            }
+            string resp = await Request(JsonUtility.ToJson(new Operation(OperationType.GetObjectId, playerEnum)));
+            var id = int.Parse(JsonUtility.FromJson<Operation>(resp).extraMessage);
+            var o = Instantiate(ObjectFactory.instance.nameToObject[name]);
+            o.networkId = id;
+            networkObjects.Add(id,o);
+            return o;
         }
         
         #endregion
@@ -156,13 +157,12 @@ namespace Script.Network
         /// <summary>
         /// 单次接收数据
         /// </summary>
-        /// <param name="stream"></param>
-        /// <returns></returns>
         private static async UniTask<string> ReceiveAsync()
         {
             var buffer = new byte[4096];
-            stream.ReadTimeout = TimeSpan.FromSeconds(5).Milliseconds;
-            var size = await stream.ReadAsync(buffer,0,buffer.Length);
+            stream.ReadTimeout = 10000;
+            int size = 0;
+            size = await stream.ReadAsync(buffer,0,buffer.Length,receiverCts.Token);
             var formatted = new byte[size];
             Array.Copy(buffer,formatted,size);
             return Encoding.ASCII.GetString(formatted);
@@ -173,18 +173,21 @@ namespace Script.Network
         public async static UniTask Connect()
         {
             UIManager.instance.通知板.gameObject.SetActive(true);
+            UIManager.instance.通知板.GetComponentInChildren<TMP_Text>().text = "正在连接中";
             try
             {
                 await client.ConnectAsync(m_IPAddress, m_port);
                 UIManager.instance.通知板.gameObject.SetActive(true);
-                UIManager.instance.通知板.text = "连接成功";
-                await UniTask.Delay(TimeSpan.FromSeconds(1));
-                UIManager.instance.通知板.gameObject.SetActive(false);
+                UIManager.instance.通知板.GetComponentInChildren<TMP_Text>().text = "连接成功";
+                UniTask.Delay(TimeSpan.FromSeconds(1)).GetAwaiter().OnCompleted(() =>
+                {
+                    UIManager.instance.通知板.gameObject.SetActive(false);
+                });
             }
             catch (Exception e)
             {
                 Debug.Log("连接失败\n"+e);
-                UIManager.instance.通知板.text = "连接失败,尝试重新连接中";
+                UIManager.instance.通知板.GetComponentInChildren<TMP_Text>().text = "连接失败,尝试重新连接中";
                 throw;
             }
         }
@@ -207,8 +210,6 @@ namespace Script.Network
             }
             try
             {
-                isSync = false;
-                operationCount++;
                 Byte[] buffer = Encoding.ASCII.GetBytes(value);
                 await client.GetStream().WriteAsync(buffer,0,buffer.Length);
             }
@@ -217,6 +218,12 @@ namespace Script.Network
                 Debug.Log("发送失败"+e);
                 throw;
             }
+        }
+
+        public static async UniTask<string> Request(string value)
+        {
+            SendAsync(value);
+            return await ReceiveAsync();
         }
         #endregion
     }

@@ -25,8 +25,7 @@ namespace Script.Manager
 
         [Header("卡牌的父物体")] public Transform CardsParent;
         [Header("施法区域")] public Image battleField;
-        [FormerlySerializedAs("正在连接中")] [Header("正在连接中")] public TMP_Text 通知板;
-        [FormerlySerializedAs("cardView")] [Header("通用卡面")] public CardView cardViewView;
+        [Header("通知版")] public GameObject 通知板;
         #endregion
 
         #region 一些核心引用
@@ -39,7 +38,7 @@ namespace Script.Manager
         {
             instance = this;
             cardInterval = Screen.width * 0.1f;
-            通知板.enabled = false;
+            通知板.gameObject.SetActive(false);
             DontDestroyOnLoad(gameObject);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using CareBoo.Serially;
 using Script.core;
 using Script.view;
@@ -12,23 +13,21 @@ namespace Script
     public class ObjectFactory : MonoBehaviour
     {
         public static ObjectFactory instance;
-        public GenericDictionary<string,NetworkObject> nameToObject = new GenericDictionary<string, NetworkObject>();
+        public SerializedDictionary<string,NetworkObject> nameToObject = new SerializedDictionary<string, NetworkObject>();
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
             instance = this;
         }
 
-        public NetworkObject GetObject(string name)
+        public NetworkObject GetObject(string prefabName)
         {
-            try
+            nameToObject.TryGetValue(prefabName, out var value);
+            if (value != null)
             {
-                return nameToObject[name];
+                return Instantiate(value);
             }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

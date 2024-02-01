@@ -1,7 +1,6 @@
 ﻿namespace Script.Network
 {
     //枚举将0空出来,因为默认值就是0,不填代表错误
-    
     /// <summary>
     /// 一些网络相关的状态码
     /// </summary>
@@ -20,9 +19,23 @@
         Player2=2,
         NotReady=3
     }
-
-    public enum OperationCode
+    public enum OperationType
     {
-        
+        Error,
+        /// <summary>
+        /// 
+        /// </summary>
+        Init,
+        /// <summary>
+        /// 申请一个NetworkObject的唯一id
+        /// </summary>
+        GetObjectId,
+        Card,
+        Skill,
+        /// <summary>
+        /// 尝试连接,无房间就创建一个
+        /// </summary>
+        TryConnectRoom,
+        EndTurn,
     }
 }

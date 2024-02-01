@@ -14,16 +14,9 @@ namespace Script
 {
     public class Test : MonoBehaviour
     {
-        public Card cardView;
-        private TcpClient client = new TcpClient();
-        private async void Awake()
+        private void Awake()
         {
-            await client.ConnectAsync("43.136.95.76", 7777);
-        }
-
-        private void Update()
-        {
-            UnityEngine.Debug.Log("asdf");
+            
         }
     }
 }

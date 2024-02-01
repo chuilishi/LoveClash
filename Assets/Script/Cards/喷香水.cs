@@ -17,7 +17,7 @@ namespace Script.Cards
         public override void Execute(List<NetworkObject> targets = null)
         {
             Player.instance.上头值++;
-            NetworkManager.Execute(new Operation(OperationType.Card, NetworkManager.instance.playerEnum, this,
+            NetworkManager.Execute(new Operation(OperationType.Card, NetworkManager.playerEnum, this,
                 targets));
         }
     }
