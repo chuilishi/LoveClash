@@ -14,24 +14,20 @@ namespace Script.Network
         public OperationType operationType;
         public int operationId = 0;
         public PlayerEnum playerEnum;
-        public NetworkObject baseNetworkObject;
+        public NetworkObject baseNetworkObject = null;
         public List<NetworkObject> targetNetworkObjects;
+
         /// <summary>
         /// 一些额外的附加信息 比如connect时对方的用户名
         /// </summary>
-        public string extraMessage = null;
-        /// <summary>
-        /// 是否为可被记录的Operation (或者只是某种单机操作,比如获取一下当前自己的信息)
-        /// </summary>
-        public bool recordable = true;
-        public Operation(OperationType operationType = OperationType.Error,PlayerEnum playerEnum = PlayerEnum.NotReady,NetworkObject baseNetworkObject = null,List<NetworkObject> targetNetworkObjects=null,string extraMessage=null,bool recordable = true)
+        public string extraMessage;
+        public Operation(OperationType operationType = OperationType.Error,PlayerEnum playerEnum = PlayerEnum.NotReady,string extraMessage=null,NetworkObject baseNetworkObject = null,List<NetworkObject> targetNetworkObjects=null)
         {
             this.operationType = operationType;
             this.playerEnum = playerEnum;
             this.baseNetworkObject = baseNetworkObject;
             this.targetNetworkObjects = targetNetworkObjects;
             this.extraMessage = extraMessage;
-            this.recordable = recordable;
         }
         public void OnBeforeSerialize()
         {

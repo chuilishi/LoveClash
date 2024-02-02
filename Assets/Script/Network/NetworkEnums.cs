@@ -1,14 +1,12 @@
 ﻿namespace Script.Network
 {
-    //枚举将0空出来,因为默认值就是0,不填代表错误
     /// <summary>
-    /// 一些网络相关的状态码
+    /// 
     /// </summary>
-    public enum StatusCode
+    public enum RequestType
     {
-        NetworkError=1,
-        Ok=2,
-        RoomIdError=3,
+        Request,
+        BroadCast
     }
     /// <summary>
     /// 自己是哪个Player

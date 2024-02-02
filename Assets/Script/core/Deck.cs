@@ -21,7 +21,7 @@ namespace Script.core
             {
                 for (var i = 0; i < cards.Count; i++)
                 {
-                    var o = NetworkManager.InstantiateNetworkObject(cards[i].name);
+                    var o = NetworkManager.instance.InstantiateNetworkObject(cards[i].name);
                     var i1 = i;
                     o.GetAwaiter().OnCompleted(() =>
                     {
