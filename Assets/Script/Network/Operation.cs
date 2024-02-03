@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using Script.core;
+using UnityEditor;
 using UnityEngine;
 
 namespace Script.Network
@@ -14,9 +16,12 @@ namespace Script.Network
         public OperationType operationType;
         public int operationId = 0;
         public PlayerEnum playerEnum;
+        [NonSerialized]
         public NetworkObject baseNetworkObject = null;
+        [NonSerialized]
         public List<NetworkObject> targetNetworkObjects;
-
+        public string baseNetworkObjectJson;
+        public List<string> targetNetworkObjectsJson;
         /// <summary>
         /// 一些额外的附加信息 比如connect时对方的用户名
         /// </summary>
@@ -31,43 +36,42 @@ namespace Script.Network
         }
         public void OnBeforeSerialize()
         {
-            
+            if(baseNetworkObject!=null) baseNetworkObjectJson = JsonUtility.ToJson(baseNetworkObject);
+            if (targetNetworkObjects != null)
+            {
+                foreach (var o in targetNetworkObjects)
+                {
+                    targetNetworkObjectsJson.Add(JsonUtility.ToJson(o));
+                }
+            }
         }
         public void OnAfterDeserialize()
         {
-            if (baseNetworkObject != null)
+            try
             {
-                var o = NetworkManager.GetObjectById(baseNetworkObject.networkId);
-                if (o == null)
+                if (!string.IsNullOrEmpty(baseNetworkObjectJson))
                 {
-                    var id = baseNetworkObject.networkId;
-                    baseNetworkObject = ObjectFactory.instance.GetObject(baseNetworkObject.name);
-                    baseNetworkObject.networkId = id;
-                    NetworkManager.networkObjects.Add(baseNetworkObject.networkId,baseNetworkObject);
-                }
-                else
-                {
+                    var json = JsonUtility.FromJson<NetworkObjectJson>(baseNetworkObjectJson);
+                    var o = NetworkManager.GetObjectById(json.networkId);
                     baseNetworkObject = o;
                 }
-            }
 
-            if (targetNetworkObjects != null)
-            {
-                for (var index = 0; index < targetNetworkObjects.Count; index++)
+                if (targetNetworkObjectsJson != null)
                 {
-                    var oo = NetworkManager.GetObjectById(targetNetworkObjects[index].networkId);
-                    if (oo == null)
+                    for (var index = 0; index < targetNetworkObjectsJson.Count; index++)
                     {
-                        var id = targetNetworkObjects[index].networkId;
-                        targetNetworkObjects[index] = ObjectFactory.instance.GetObject(targetNetworkObjects[index].name);
-                        targetNetworkObjects[index].networkId = id;
-                        NetworkManager.networkObjects.Add(targetNetworkObjects[index].networkId,targetNetworkObjects[index]);
-                    }
-                    else
-                    {
-                        targetNetworkObjects[index] = oo;
+                        if (!string.IsNullOrEmpty(targetNetworkObjectsJson[index]))
+                        {
+                            var json = JsonUtility.FromJson<NetworkObjectJson>(targetNetworkObjectsJson[index]);
+                            var o = NetworkManager.GetObjectById(json.networkId);
+                            if(o!=null) targetNetworkObjects.Add(o);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                EditorApplication.ExitPlaymode();
             }
         }
     }

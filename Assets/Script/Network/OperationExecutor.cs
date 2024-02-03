@@ -17,7 +17,9 @@ namespace Script.Network
         {
            Main();
         }
-
+        /// <summary>
+        /// 持续执行队列里的命令
+        /// </summary>
         public static async void Main()
         {
             while (true)
@@ -42,11 +44,11 @@ namespace Script.Network
                 case OperationType.Skill:
                     await Skill(operation);
                     break;
-                case OperationType.TryConnectRoom:
-                    await ConnectHandler(operation);
-                    break;
                 case OperationType.EndTurn:
                     await EndTurn(operation);
+                    break;
+                case OperationType.CreateObject:
+                    await CreateObject(operation);
                     break;
             }
         }
@@ -59,16 +61,16 @@ namespace Script.Network
         private static async UniTask Card(Operation operation)
         {
             operation.baseNetworkObject.GetComponent<Card>().Execute(operation.targetNetworkObjects);
-        }
+        } 
 
         private static async UniTask Skill(Operation operation)
         {
             
         }
-
-        private static async UniTask ConnectHandler(Operation operation)
+        private static async UniTask CreateObject(Operation operation)
         {
-               
+            if (operation.playerEnum == NetworkManager.playerEnum) return;//其实这个不应该出现的,因为CreateNetworkObject 用的是Request
+            
         }
     }
 }

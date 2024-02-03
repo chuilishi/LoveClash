@@ -27,7 +27,7 @@
         /// <summary>
         /// 申请一个NetworkObject的唯一id
         /// </summary>
-        GetObjectId,
+        CreateObject,
         Card,
         Skill,
         /// <summary>

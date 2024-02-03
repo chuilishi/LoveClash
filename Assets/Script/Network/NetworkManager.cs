@@ -1,38 +1,32 @@
-﻿using System;
+﻿#region NameSpace
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using EasyButtons;
 using Script.core;
 using Script.Manager;
 using TMPro;
-using UnityEditor;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.Serialization;
 
+#endregion
 
 namespace Script.Network
 {
-    /// <summary>
-    /// 逻辑: 第一次连接成功后发送房间号, 得到确认消息, 对局开始
-    /// 
-    /// </summary>
     [RequireComponent(typeof(OperationExecutor))]
-    
     public class NetworkManager : MonoBehaviour
     {
+        #region 变量
+
         public string IPAddress = "127.0.0.1";
         //服务器根据端口识别是receiver还是sender
         public int receiverPort = 7777;
         public int senderPort = 7778;
-        public TcpClient receiverClient;
-        public TcpClient senderClient;
+        public static TcpClient receiverClient;
+        public static TcpClient senderClient;
         public int roomId = 00000;
         public string userName = "Admin";
         
@@ -43,6 +37,9 @@ namespace Script.Network
         private List<Operation> operations = new List<Operation>();
         
         public static PlayerEnum playerEnum = PlayerEnum.NotReady;
+
+        #endregion
+        
         private void Awake()
         {
             instance = this;
@@ -51,11 +48,6 @@ namespace Script.Network
             //第一次连接 发送房间号
             Init();
         }
-        public static void Execute(Operation operation)
-        {
-            OperationExecutor.Execute(operation);
-        }
-        
         #region 持续接收message并交给Executor执行
         //TryConnect和Init都是Request  Init返回的是对手的Init Operation
         private async void Init()
@@ -85,19 +77,19 @@ namespace Script.Network
             var opponentInit = await RequestAsync(senderClient,
                 JsonUtility.ToJson(new Operation(OperationType.Init, playerEnum, extraMessage: userName)));
             var operation = JsonUtility.FromJson<Operation>(opponentInit);
-            Debug.Log("Init结束");
             UIManager.instance.通知板.gameObject.SetActive(true);
             UIManager.instance.通知板.GetComponentInChildren<TMP_Text>().text = "your opponent is " + operation.extraMessage;//Init的extraMessage是username
             UniTask.Delay(3000).GetAwaiter().OnCompleted((() =>
             {
                 UIManager.instance.通知板.gameObject.SetActive(false);
             }));
-            Receiver();
+            MessageReceiver();
+            GameManager.instance.Main();
         }
         /// <summary>
         /// 主要消息接收器
         /// </summary>
-        public async void Receiver()
+        public async void MessageReceiver()
         {
             while (true)
             {
@@ -125,13 +117,14 @@ namespace Script.Network
             return networkObject;
         }
         /// <summary>
-        /// 本地创建NetworkObject, 代替Instantiate
+        /// 本地创建NetworkObject, 代替Instantiate, 返回的baseNetworkObject中附带了新的networkId
         /// </summary>
-        public async UniTask<NetworkObject> InstantiateNetworkObject(string name)
+        public static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum)
         {
-            string resp = await RequestAsync(senderClient,JsonUtility.ToJson(new Operation(OperationType.GetObjectId,playerEnum)));
-            var id = int.Parse(JsonUtility.FromJson<Operation>(resp).extraMessage);
-            var o = Instantiate(ObjectFactory.instance.nameToObject[name]);
+            var o = Instantiate(ObjectFactory.instance.nameToObject[objectEnum]);
+            string resp = await RequestAsync(senderClient,JsonUtility.ToJson(new Operation(OperationType.CreateObject,playerEnum,baseNetworkObject:o)));
+            var id = JsonUtility.FromJson<NetworkObjectJson>(
+                JsonUtility.FromJson<Operation>(resp).baseNetworkObjectJson).networkId;
             o.networkId = id;
             networkObjects.Add(id,o);
             return o;

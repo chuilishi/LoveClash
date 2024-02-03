@@ -10,7 +10,6 @@ namespace Script.Manager
     public class UIManager : MonoBehaviour
     {
         public static UIManager instance;
-
         #region 卡牌相关
 
         [Header("卡牌中心位置锚点")] public Transform centerCardPivot;

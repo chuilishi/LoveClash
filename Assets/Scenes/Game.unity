@@ -526,7 +526,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fda58afbbef4085a822e3beaf7e70d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curPlayer: 1
   GameStart:
     m_PersistentCalls:
       m_Calls: []
@@ -4658,9 +4657,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameToObject:
     _serializedList:
-    - Key: "\u55B7\u9999\u6C34"
+    - Key: 0
       Value: {fileID: -5596448384558858581, guid: 1b574758f73de1040a02003bef760739, type: 3}
-    - Key: "\u9001\u793C\u7269"
+    - Key: 1
       Value: {fileID: 8084117949893129235, guid: 15d8b587ea04d3140b6aec01b828e866, type: 3}
 --- !u!4 &1263390421
 Transform:
@@ -5345,7 +5344,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IPAddress: 127.0.0.1
-  port: 7777
+  receiverPort: 7777
+  senderPort: 7778
   roomId: 11111
   userName: Admin
 --- !u!114 &1557006993

@@ -8,7 +8,7 @@ public class Reconnect : MonoBehaviour,IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        NetworkManager.instance.Connect(NetworkManager.instance.senderClient,NetworkManager.instance.IPAddress,NetworkManager.instance.senderPort);
-        NetworkManager.instance.Connect(NetworkManager.instance.receiverClient,NetworkManager.instance.IPAddress,NetworkManager.instance.receiverPort);
+        NetworkManager.instance.Connect(NetworkManager.senderClient,NetworkManager.instance.IPAddress,NetworkManager.instance.senderPort);
+        NetworkManager.instance.Connect(NetworkManager.receiverClient,NetworkManager.instance.IPAddress,NetworkManager.instance.receiverPort);
     }
 }

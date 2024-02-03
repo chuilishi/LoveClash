@@ -10,15 +10,15 @@ namespace Script.Manager
     public class GameManager : MonoBehaviour
     {
         public static GameManager instance;
-        public PlayerEnum curPlayer = PlayerEnum.Player1;
-        
         private void Awake()
         {
             instance = this;
         }
-
         #region 游戏流程
-
+        public void Main()
+        {
+            NetworkManager.InstantiateNetworkObject(ObjectEnum.送礼物);
+        }
         public UnityEvent GameStart;
         public void EndTurn(PlayerEnum playerEnum)
         {
@@ -28,6 +28,7 @@ namespace Script.Manager
         public void EndGame()
         {
             //TODO
+            
         }
         #endregion
         
