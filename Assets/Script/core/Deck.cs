@@ -1,41 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Cysharp.Threading.Tasks;
 using Script.Cards;
 using Script.Manager;
 using Script.Network;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Script.core
 {
     public class Deck : MonoBehaviour
     {
-        public List<Card> cards;
+        [Header("牌库中的卡")]
+        public List<ObjectEnum> cards;
+
+        private List<Card> m_cards = new List<Card>();
         public static Deck instance;
 
         private void Awake()
         {
             instance = this;
-            GameManager.instance.GameStart.AddListener((() =>
+            GameManager.instance.GameStart.AddListener((() =>Init()));
+        }
+
+        public async UniTask Init()
+        {
+            for (var i = 0; i < cards.Count; i++)
             {
-                for (var i = 0; i < cards.Count; i++)
-                {
-                    var o = NetworkManager.InstantiateNetworkObject(cards[i].objectEnum);
-                    var i1 = i;
-                    o.GetAwaiter().OnCompleted(() =>
-                    {
-                        o.GetAwaiter().GetResult().transform.SetParent(UIManager.instance.CardsParent);
-                        if(o.GetAwaiter().GetResult().GetComponent<Card>()==null) Debug.LogError("没有名叫 "+cards[i1].name+" 的卡");
-                        cards[i1] = o.GetAwaiter().GetResult().GetComponent<Card>();
-                    });
-                }
-            }));
+                var o = await NetworkManager.InstantiateNetworkObject(cards[i],UIManager.instance.CardsParent);
+                m_cards.Add(o.GetComponent<Card>());
+            }
         }
         public Card DrawCard()
         {
             if(cards.Count==0)return null;
-            var card = cards[0];
+            var card = m_cards[0];
             cards.RemoveAt(0);
             return card;
         }
@@ -46,7 +47,7 @@ namespace Script.core
             for (int i = indexes.Count - 1; i >= 0; i--)
             {
                 if(indexes[i]<0||indexes[i]>=cards.Count)continue;
-                list.Add(cards[indexes[i]]);
+                list.Add(m_cards[indexes[i]]);
                 cards.RemoveAt(indexes[i]);
             }
             return list;

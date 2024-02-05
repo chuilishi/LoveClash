@@ -37,7 +37,7 @@ namespace Script.view
         //是否是放大状态
         private bool _bigMode = false;
         private Camera mainCamera;
-
+        
         #region 一些动画属性
         //放大时向上移动的距离
         private readonly float enterUpDistance = 200;
@@ -73,7 +73,6 @@ namespace Script.view
         //设置并回到原位置
         public void ResetPosition(Vector3? position = null)
         {
-            Debug.Log(position);
             if (position != null)originPos = position.GetValueOrDefault();
             DOTween.Sequence()
                 .Join(transform.DOScale(Vector3.one,0.3f))

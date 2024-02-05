@@ -14,10 +14,10 @@ namespace Script.Cards
             
         }
 
-        public override void Execute(List<NetworkObject> targets = null)
+        public override void Execute(Character character,List<NetworkObject> targets = null)
         {
-            Player.instance.上头值++;
-            Player.instance.心动值++;
+            character.上头值++;
+            character.心动值++;
         }
     }
 }

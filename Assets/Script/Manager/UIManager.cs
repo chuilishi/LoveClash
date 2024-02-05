@@ -25,12 +25,13 @@ namespace Script.Manager
         [Header("卡牌的父物体")] public Transform CardsParent;
         [Header("施法区域")] public Image battleField;
         [Header("通知版")] public GameObject 通知板;
+        [Header("物品池")] public GameObject 物品池;
         #endregion
 
         #region 一些核心引用
         
-        public Player player;
-        public Opponent opponent;
+        [FormerlySerializedAs("player")] public PlayerView playerView;
+        [FormerlySerializedAs("opponent")] public OpponentView opponentView;
         #endregion
         
         private void Awake()

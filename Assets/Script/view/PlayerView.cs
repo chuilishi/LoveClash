@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Script.view
 {
-    public class Player : MonoBehaviour
+    public class PlayerView : MonoBehaviour
     {
         private List<CardView> handCards = new List<CardView>();
         
@@ -26,7 +26,7 @@ namespace Script.view
         
         private void Awake()
         {
-            UIManager.instance.player = this;
+            UIManager.instance.playerView = this;
             心动值 = transform.Find("心动值/心动值Text").gameObject.GetComponent<TextMeshProUGUI>();
             上头值 = transform.Find("上头值/上头值Text").gameObject.GetComponent<TextMeshProUGUI>();
             信任值 = transform.Find("信任值/信任值Text").gameObject.GetComponent<TextMeshProUGUI>();

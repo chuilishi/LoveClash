@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Script.core;
+using Script.Manager;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,6 +21,7 @@ namespace Script.Network
         public NetworkObject baseNetworkObject = null;
         [NonSerialized]
         public List<NetworkObject> targetNetworkObjects;
+        
         public string baseNetworkObjectJson;
         public List<string> targetNetworkObjectsJson;
         /// <summary>
@@ -52,8 +54,18 @@ namespace Script.Network
                 if (!string.IsNullOrEmpty(baseNetworkObjectJson))
                 {
                     var json = JsonUtility.FromJson<NetworkObjectJson>(baseNetworkObjectJson);
-                    var o = NetworkManager.GetObjectById(json.networkId);
-                    baseNetworkObject = o;
+                    Debug.Log(baseNetworkObjectJson);
+                    if (json.networkId != -1)
+                    {
+                        var o = NetworkManager.GetObjectById(json.networkId);
+                        if (o == null)
+                        {
+                            o = NetworkManager.InstantiateNetworkObjectLocal(json.objectEnum, json.networkId,
+                                UIManager.instance.物品池.transform);
+                            Debug.Log(o.name);
+                        }
+                        baseNetworkObject = o;
+                    }
                 }
 
                 if (targetNetworkObjectsJson != null)
@@ -63,15 +75,23 @@ namespace Script.Network
                         if (!string.IsNullOrEmpty(targetNetworkObjectsJson[index]))
                         {
                             var json = JsonUtility.FromJson<NetworkObjectJson>(targetNetworkObjectsJson[index]);
-                            var o = NetworkManager.GetObjectById(json.networkId);
-                            if(o!=null) targetNetworkObjects.Add(o);
+                            if (json.networkId != -1)
+                            {
+                                var o = NetworkManager.GetObjectById(json.networkId);
+                                if (o == null)
+                                {
+                                    o = NetworkManager.InstantiateNetworkObjectLocal(json.objectEnum, json.networkId,
+                                        UIManager.instance.物品池.transform);
+                                }
+                                targetNetworkObjects.Add(o);
+                            }
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                EditorApplication.ExitPlaymode();
+                Debug.Log(e);
             }
         }
     }

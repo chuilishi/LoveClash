@@ -9,19 +9,18 @@ using UnityEngine.UI;
 namespace Script.Cards
 {
     [Serializable]
-    public abstract class Card : NetworkObject
+    public abstract class Card : NetworkObject,IExecutable
     {
         public Sprite cardImage;
         [HideInInspector]
         public view.CardView cardView;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             cardView = GetComponent<view.CardView>();
-            Assert.AreNotEqual(cardView,null);
             transform.Find("Picture").GetComponent<Image>().sprite = cardImage;
         }
 
-        public abstract void Execute(List<NetworkObject> targets = null);
+        public abstract void Execute(Character character,List<NetworkObject> targets = null);
     }
 }

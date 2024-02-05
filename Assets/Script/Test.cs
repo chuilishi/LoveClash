@@ -21,7 +21,6 @@ namespace Script
         public NetworkObject networkObject;
         private void Awake()
         {
-            Debug.Log(JsonUtility.ToJson(new Operation()));
         }
     }
 }

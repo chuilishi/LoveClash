@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Cysharp.Threading.Tasks;
 using Script.Cards;
+using Script.core;
 using Script.Manager;
 using UnityEngine;
 
@@ -12,7 +14,7 @@ namespace Script.Network
     /// </summary>
     public class OperationExecutor : MonoBehaviour
     {
-        private static List<Operation> _operations = new List<Operation>();
+        public static List<Operation> _operations = new List<Operation>();
         private void Awake()
         {
            Main();
@@ -20,7 +22,7 @@ namespace Script.Network
         /// <summary>
         /// 持续执行队列里的命令
         /// </summary>
-        public static async void Main()
+        private static async void Main()
         {
             while (true)
             {
@@ -30,9 +32,18 @@ namespace Script.Network
                 await m_Execute(operation);
             }
         }
+        /// <summary>
+        /// 最常用的,外部用来执行命令的方法
+        /// </summary>
+        /// <param name="operation"></param>
         public static void Execute(Operation operation)
         {
-            _operations.Add(operation);
+            var task = NetworkUtility.RequestAsync(NetworkManager.senderClient,JsonUtility.ToJson(operation));
+            task.GetAwaiter().OnCompleted((
+                () =>
+                {
+                    _operations.Add(JsonUtility.FromJson<Operation>(task.GetAwaiter().GetResult()));
+                }));
         }
         private static async UniTask m_Execute(Operation operation)
         {
@@ -52,17 +63,24 @@ namespace Script.Network
                     break;
             }
         }
-
         private static async UniTask EndTurn(Operation operation)
         {
-            //TODO
-            
+            GameManager.instance.TurnChange.Invoke(operation.playerEnum==PlayerEnum.Player1?PlayerEnum.Player2: PlayerEnum.Player1);
         }
         private static async UniTask Card(Operation operation)
         {
-            operation.baseNetworkObject.GetComponent<Card>().Execute(operation.targetNetworkObjects);
+            if (operation.playerEnum == NetworkManager.playerEnum)
+            {
+                await Player.instance.PlayCard(operation.baseNetworkObject.GetComponent<Card>(),
+                    operation.targetNetworkObjects);
+            }
+            else
+            {
+                await Opponent.instance.PlayCard(operation.baseNetworkObject.GetComponent<Card>(),
+                    operation.targetNetworkObjects);
+            }
         } 
-
+        //比如抽卡
         private static async UniTask Skill(Operation operation)
         {
             
@@ -70,7 +88,6 @@ namespace Script.Network
         private static async UniTask CreateObject(Operation operation)
         {
             if (operation.playerEnum == NetworkManager.playerEnum) return;//其实这个不应该出现的,因为CreateNetworkObject 用的是Request
-            
         }
     }
 }

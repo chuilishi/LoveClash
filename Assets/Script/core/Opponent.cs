@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Script.Cards;
 using Script.Manager;
 using UnityEngine;
 
 namespace Script.core
 {
-    public class Opponent : MonoBehaviour
+    public class Opponent : Character
     {
         public static Opponent instance;
         [SerializeField]
@@ -13,7 +16,7 @@ namespace Script.core
         private int _信任值 = 10;
         [SerializeField]
         private int _上头值 = 10;
-        public int 心动值
+        public override int 心动值
         {
             get => _心动值;
             set
@@ -25,11 +28,11 @@ namespace Script.core
                 else
                 {
                     _心动值 = value;
-                    UIManager.instance.opponent.心动值.text = value.ToString();
+                    UIManager.instance.opponentView.心动值.text = value.ToString();
                 }
             }
         }
-        public int 信任值
+        public override int 信任值
         {
             get => _信任值;
             set
@@ -41,11 +44,11 @@ namespace Script.core
                 else
                 {
                     _信任值 = value;
-                    UIManager.instance.opponent.信任值.text = value.ToString();
+                    UIManager.instance.opponentView.信任值.text = value.ToString();
                 }
             }
         }
-        public int 上头值
+        public override int 上头值
         {
             get => _上头值;
             set
@@ -57,9 +60,29 @@ namespace Script.core
                 else
                 {
                     _上头值 = value;
-                    UIManager.instance.opponent.上头值.text = value.ToString();
+                    UIManager.instance.opponentView.上头值.text = value.ToString();
                 }
             }
+        }
+
+        public override async UniTask PlayCard(Card card, List<NetworkObject> targets)
+        {
+            card.Execute(this,targets);
+        }
+
+        public override void DrawCard()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override List<Card> DrawCard(List<int> indexes)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Awake()
+        {
+            instance = this;
         }
     }
 }

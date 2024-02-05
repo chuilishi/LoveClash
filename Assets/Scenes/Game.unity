@@ -526,7 +526,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fda58afbbef4085a822e3beaf7e70d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curPlayer: 1
   GameStart:
+    m_PersistentCalls:
+      m_Calls: []
+  TurnChange:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &47592712
@@ -1973,9 +1977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687f9a1e623d461e9a6de439929c2cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cards:
-  - {fileID: -5596448384558858581, guid: 1b574758f73de1040a02003bef760739, type: 3}
-  - {fileID: 8084117949893129235, guid: 15d8b587ea04d3140b6aec01b828e866, type: 3}
+  cards: 0000000001000000
 --- !u!114 &464477382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2043,8 +2045,9 @@ MonoBehaviour:
   CardsParent: {fileID: 302846395}
   battleField: {fileID: 984749279}
   "\u901A\u77E5\u677F": {fileID: 454966674}
-  player: {fileID: 7281713742645273857}
-  opponent: {fileID: 1756679711}
+  "\u7269\u54C1\u6C60": {fileID: 982344073}
+  playerView: {fileID: 0}
+  opponentView: {fileID: 0}
 --- !u!1 &487964142
 GameObject:
   m_ObjectHideFlags: 0
@@ -4341,6 +4344,37 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2309163447871331195, guid: 15d8b587ea04d3140b6aec01b828e866, type: 3}
   m_PrefabInstance: {fileID: 952851334}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &982344073
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 982344074}
+  m_Layer: 0
+  m_Name: "\u7269\u54C1\u6C60"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &982344074
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982344073}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &984749276
 GameObject:
   m_ObjectHideFlags: 0
@@ -5307,7 +5341,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1557006991}
-  - component: {fileID: 1557006993}
   - component: {fileID: 1557006992}
   m_Layer: 0
   m_Name: NetworkManager
@@ -5348,18 +5381,6 @@ MonoBehaviour:
   senderPort: 7778
   roomId: 11111
   userName: Admin
---- !u!114 &1557006993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1557006990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a88cf0f8b9464dbb0b94017f586204, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1569669771
 GameObject:
   m_ObjectHideFlags: 0
@@ -5931,7 +5952,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b30538f905b0415b89bf8ba63abe15c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  opponent: {fileID: 0}
   "_\u5FC3\u52A8\u503C_": 10
   "_\u4FE1\u4EFB\u503C_": 10
   "_\u4E0A\u5934\u503C_": 10
@@ -7295,6 +7315,7 @@ SceneRoots:
   - {fileID: 531863943}
   - {fileID: 2008331879}
   - {fileID: 1670113427}
+  - {fileID: 982344074}
   - {fileID: 464477379}
   - {fileID: 464533180}
   - {fileID: 1557006991}
