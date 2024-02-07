@@ -10,6 +10,9 @@ namespace Script.core
     public class Opponent : Character
     {
         public static Opponent instance;
+
+        #region 三个值
+
         [SerializeField]
         private int _心动值 = 10;
         [SerializeField]
@@ -65,6 +68,20 @@ namespace Script.core
             }
         }
 
+        #endregion
+        
+        private void Awake()
+        {
+            instance = this;
+        }
+
+        private void Start()
+        {
+            心动值 = _心动值;
+            信任值 = _信任值;
+            上头值 = _上头值;
+        }
+
         public override async UniTask PlayCard(Card card, List<NetworkObject> targets)
         {
             card.Execute(this,targets);
@@ -72,17 +89,12 @@ namespace Script.core
 
         public override void DrawCard()
         {
-            throw new NotImplementedException();
+            
         }
 
         public override List<Card> DrawCard(List<int> indexes)
         {
             throw new NotImplementedException();
-        }
-
-        private void Awake()
-        {
-            instance = this;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Script.Manager
             }
             var formatted = new byte[messageSize];
             Array.Copy(buffer,formatted,messageSize);
-            var s = Encoding.ASCII.GetString(formatted);
+            var s = Encoding.UTF8.GetString(formatted);
             Debug.Log("读入的是"+s);
             return s;
         }
@@ -95,11 +95,10 @@ namespace Script.Manager
         {
             try
             {
-                Byte[] buffer = Encoding.ASCII.GetBytes(value);
+                Byte[] buffer = Encoding.UTF8.GetBytes(value);
                 //把一个代表数据长度的int写在前面
                 var bufferHead = BitConverter.GetBytes(buffer.Length);
                 byte[] bufferToBeSend = new byte[bufferHead.Length+buffer.Length];
-                
                 Array.Copy(bufferHead,0,bufferToBeSend,0,bufferHead.Length);
                 Array.Copy(buffer,0,bufferToBeSend,bufferHead.Length,buffer.Length);
                 await client.GetStream().WriteAsync(bufferToBeSend,0,bufferToBeSend.Length);
@@ -120,7 +119,7 @@ namespace Script.Manager
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.Log(e);
                 throw;
             }
             return s;
@@ -128,7 +127,7 @@ namespace Script.Manager
 
         public static async UniTask<string> RequestAsync(string value)
         {
-            var client = NetworkManager.senderClient;
+            var client = NetworkManager.instance.senderClient;
             string s = "";
             WriteAsync(client,value);
             try

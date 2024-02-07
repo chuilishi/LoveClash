@@ -1,5 +1,9 @@
 using System;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Script.Cards;
+using Script.core;
+using Script.Manager;
 using Script.Utility;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,25 +12,24 @@ using UnityEngine.Serialization;
 namespace Script.view
 {
     [RequireComponent(typeof(InputHandler))]
-    public class CardView : MonoBehaviour,IMPointerEnterHandler,IMBeginDragHandler,IMDragHandler,IMEndDragHandler,IMPointerExitHandler
+    public class CardView : NetworkObject,IMPointerEnterHandler,IMBeginDragHandler,IMDragHandler,IMEndDragHandler,IMPointerExitHandler
     {
         [HideInInspector]
         public RectTransform rectTransform;
-        private RectTransform 施法区域;
         //原始的旋转
         [HideInInspector]
         public Vector3 rotate;
         //原始的RectTransform.AnchoredPosition
         [HideInInspector]
         public Vector3 originPos;
-        //代表卡的编号
-        [SerializeField] public int cardCode;
-        public Sequence toBigModeTween;
-        public Sequence backToOriginPosTween;
         /// <summary>
         /// 是否是可触发状态
         /// </summary>
         private bool _active = true;
+        /// <summary>
+        /// 开始拖动时的偏移量
+        /// </summary>
+        private Vector2 dragOffset;
         public bool active
         {
             get => _active;
@@ -45,7 +48,6 @@ namespace Script.view
         #endregion
         private void Awake()
         {
-            施法区域 = GameObject.Find("施法区域").GetComponent<RectTransform>();
             rectTransform = GetComponent<RectTransform>();
             _shine = transform.Find("Shine");
             mainCamera = Camera.main;
@@ -57,7 +59,6 @@ namespace Script.view
         {
             originPos = transform.position;
         }
-        
         #region 一些事件函数
         public void OnPointerEnter(PointerEventData eventData)
         {
@@ -70,37 +71,58 @@ namespace Script.view
                     originPos + new Vector3(0, Screen.height*0.125f,0), 0.2f));
             _bigMode = true;
         }
-        //设置并回到原位置
-        public void ResetPosition(Vector3? position = null)
+        //设置并回到原位置(不传入就是回到原位置)
+        public async UniTask ResetPosition(string s,Vector3? position = null)
         {
+            Debug.Log(s);
             if (position != null)originPos = position.GetValueOrDefault();
-            DOTween.Sequence()
-                .Join(transform.DOScale(Vector3.one,0.3f))
+            active = false;
+            await DOTween.Sequence()
+                .Join(transform.DOScale(Vector3.one, 0.3f))
                 .Join(DOTween.To(() => transform.position,
                     value => transform.position = value,
-                    originPos, 0.2f)).Play();
+                    originPos, 0.2f)).Play().ToUniTask();
+            active = true;
         }
-        
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!active) return;
+            dragOffset = (Vector2)transform.position - eventData.position;
         }
 
         public void OnDrag(PointerEventData eventData)
         {
             if (!active) return;
+            transform.position = (Vector2)eventData.position + dragOffset;
         }
 
-        public void OnEndDrag(PointerEventData eventData)
+        public async void OnEndDrag(PointerEventData eventData)
         {
             if (!active) return;
+            if (RectTransformUtility.RectangleContainsScreenPoint(UIManager.instance.施法区域.rectTransform,
+                    eventData.position))
+            {
+                ExecuteCard(GetComponent<Card>());
+                transform.parent = UIManager.instance.弃牌堆.transform;
+                await ResetPosition("onenddrag",UIManager.instance.弃牌堆.transform.position);
+                active = false;
+            }
+            else
+            {
+                active = false;
+                await ResetPosition("onenddrag2");
+                active = true;
+            }
         }
-        public void OnPointerExit(PointerEventData eventData)
+        public async void OnPointerExit(PointerEventData eventData)
         {
             if(!active)return;
             if (!_bigMode) return;
+            Debug.Log("PointerExit");
             _bigMode = false;
-            ResetPosition();
+            active = false;
+            await ResetPosition("onpointerExit");
+            active = true;
         }
         #endregion
     }

@@ -17,81 +17,41 @@ namespace Script.Network
         public OperationType operationType;
         public int operationId = 0;
         public PlayerEnum playerEnum;
+        public int baseNetworkId = -1;
+        public List<int> targetNetworkId = new List<int>();
         [NonSerialized]
-        public NetworkObject baseNetworkObject = null;
+        public NetworkObject baseNetworkObject;
         [NonSerialized]
         public List<NetworkObject> targetNetworkObjects;
-        
-        public string baseNetworkObjectJson;
-        public List<string> targetNetworkObjectsJson;
         /// <summary>
         /// 一些额外的附加信息 比如connect时对方的用户名
         /// </summary>
         public string extraMessage;
-        public Operation(OperationType operationType = OperationType.Error,PlayerEnum playerEnum = PlayerEnum.NotReady,string extraMessage=null,NetworkObject baseNetworkObject = null,List<NetworkObject> targetNetworkObjects=null)
+        public Operation(OperationType operationType = OperationType.Error,string extraMessage=null,NetworkObject baseNetworkObject = null,List<NetworkObject> targetNetworkObjects=null)
         {
             this.operationType = operationType;
-            this.playerEnum = playerEnum;
-            this.baseNetworkObject = baseNetworkObject;
-            this.targetNetworkObjects = targetNetworkObjects;
-            this.extraMessage = extraMessage;
-        }
-        public void OnBeforeSerialize()
-        {
-            if(baseNetworkObject!=null) baseNetworkObjectJson = JsonUtility.ToJson(baseNetworkObject);
+            baseNetworkId = baseNetworkObject == null ? -1 : baseNetworkObject.networkId;
             if (targetNetworkObjects != null)
             {
                 foreach (var o in targetNetworkObjects)
                 {
-                    targetNetworkObjectsJson.Add(JsonUtility.ToJson(o));
+                    targetNetworkId.Add(o.networkId);
                 }
             }
+            this.extraMessage = extraMessage;
+            playerEnum = NetworkManager.playerEnum;
+        }
+        public void OnBeforeSerialize()
+        {
+            
         }
         public void OnAfterDeserialize()
         {
-            try
+            baseNetworkObject = NetworkManager.GetObjectById(baseNetworkId);
+            targetNetworkObjects = new List<NetworkObject>();
+            foreach (var id in targetNetworkId)
             {
-                if (!string.IsNullOrEmpty(baseNetworkObjectJson))
-                {
-                    var json = JsonUtility.FromJson<NetworkObjectJson>(baseNetworkObjectJson);
-                    Debug.Log(baseNetworkObjectJson);
-                    if (json.networkId != -1)
-                    {
-                        var o = NetworkManager.GetObjectById(json.networkId);
-                        if (o == null)
-                        {
-                            o = NetworkManager.InstantiateNetworkObjectLocal(json.objectEnum, json.networkId,
-                                UIManager.instance.物品池.transform);
-                            Debug.Log(o.name);
-                        }
-                        baseNetworkObject = o;
-                    }
-                }
-
-                if (targetNetworkObjectsJson != null)
-                {
-                    for (var index = 0; index < targetNetworkObjectsJson.Count; index++)
-                    {
-                        if (!string.IsNullOrEmpty(targetNetworkObjectsJson[index]))
-                        {
-                            var json = JsonUtility.FromJson<NetworkObjectJson>(targetNetworkObjectsJson[index]);
-                            if (json.networkId != -1)
-                            {
-                                var o = NetworkManager.GetObjectById(json.networkId);
-                                if (o == null)
-                                {
-                                    o = NetworkManager.InstantiateNetworkObjectLocal(json.objectEnum, json.networkId,
-                                        UIManager.instance.物品池.transform);
-                                }
-                                targetNetworkObjects.Add(o);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
+                targetNetworkObjects.Add(NetworkManager.GetObjectById(id));
             }
         }
     }

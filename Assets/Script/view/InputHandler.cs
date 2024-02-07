@@ -13,9 +13,9 @@ namespace Script.view
         IMEndDragHandler endDragHandler ;
         IMPointerEnterHandler pointerEnterHandler; 
         IMPointerExitHandler pointerExitHandler ;
-
+        
         public bool enable = true;
-        public bool draggable = false;
+        public bool draggable = true;
         
         private void Awake()
         {
@@ -36,7 +36,7 @@ namespace Script.view
         {
             if(!enable)return;
             if(!draggable)return;
-            beginDragHandler?.OnBeginDragHandler(eventData);
+            beginDragHandler?.OnBeginDrag(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -60,7 +60,7 @@ namespace Script.view
         }
     }
     public interface IMPointerEnterHandler{public void OnPointerEnter(PointerEventData eventData){}}
-    public interface IMBeginDragHandler{public void OnBeginDragHandler(PointerEventData eventData){}}
+    public interface IMBeginDragHandler{public void OnBeginDrag(PointerEventData eventData){}}
     public interface IMDragHandler{public void OnDrag(PointerEventData eventData){}}
     public interface IMEndDragHandler{public void OnEndDrag(PointerEventData eventData){}}
     public interface IMPointerExitHandler{public void OnPointerExit(PointerEventData eventData){}}

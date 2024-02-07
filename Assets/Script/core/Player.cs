@@ -7,6 +7,7 @@ using Script.Cards;
 using Script.Manager;
 using Script.Network;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Script.core
 {
@@ -72,12 +73,17 @@ namespace Script.core
         }
 
         #endregion
-        
-        public void GameStart()
+        private void Awake()
         {
-            DrawCard();
+            instance = this;
         }
 
+        private void Start()
+        {
+            心动值 = _心动值;
+            信任值 = _信任值;
+            上头值 = _上头值;
+        }
         #region 打牌
 
         public override async UniTask PlayCard(Card card,List<NetworkObject> targets)
@@ -87,30 +93,34 @@ namespace Script.core
 
         #endregion
         #region 抽卡
-
         /// <summary>
         /// 抽n张卡
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public override void DrawCard()
+        public override async void DrawCard()
         {
-            var card = Deck.instance.DrawCard();
-            if (card == null)
-            {
-                Debug.Log("没牌了");
-                return;
-            }
-            handCards.Add(card);
-            UIManager.instance.playerView.DrawCard(card);
+            //这是牌库版本的老代码 
+            // var card = Deck.instance.DrawCard();
+            // if (card == null)
+            // {
+            //     Debug.Log("没牌了");
+            //     return;
+            // }
+            // handCards.Add(card);
+            // UIManager.instance.playerView.DrawCard(card);
+            //Choose a Random Value from ObjectEnum
+            
+            var values = Enum.GetValues(typeof(ObjectEnum));
+            var card = await InstantiateNetworkObject((ObjectEnum)new Random().Next(values.Length), UIManager.instance.CardsParent);
+            UIManager.instance.playerView.DrawCard(card.GetComponent<Card>());
         }
         /// <summary>
         /// 抽指定Index, 0代表数组中最后一张牌(即实际牌堆顶的第一张)
         /// </summary>
-        /// <param name="num"></param>
         /// <param name="indexes"></param>
         /// <returns></returns>
-        public override List<Cards.Card> DrawCard(List<int>indexes)
+        public override List<Card> DrawCard(List<int>indexes)
         {
             return Deck.instance.DrawCard(indexes);
         }

@@ -20,7 +20,6 @@ namespace Script.Cards
             cardView = GetComponent<view.CardView>();
             transform.Find("Picture").GetComponent<Image>().sprite = cardImage;
         }
-
         public abstract void Execute(Character character,List<NetworkObject> targets = null);
     }
 }

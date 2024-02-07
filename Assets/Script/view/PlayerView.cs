@@ -49,7 +49,6 @@ namespace Script.view
             }
             AdjustPos();
         }
-        
         public void DrawCard(Cards.Card card)
         {
             try
@@ -72,7 +71,7 @@ namespace Script.view
             for (int i = 0; i < handCards.Count; i++)
             {
                 var minus = i - (handCards.Count-1)/2f;
-                handCards[i].ResetPosition(new Vector3(minus*UIManager.instance.cardInterval+UIManager.instance.centerCardPivot.position.x,UIManager.instance.centerCardPivot.position.y));
+                handCards[i].ResetPosition("adjustpos",new Vector3(minus*UIManager.instance.cardInterval+UIManager.instance.centerCardPivot.position.x,UIManager.instance.centerCardPivot.position.y));
             }
         }
     }

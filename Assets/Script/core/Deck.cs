@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 
 namespace Script.core
 {
-    public class Deck : MonoBehaviour
+    public class Deck : NetworkObject
     {
         [Header("牌库中的卡")]
         public List<ObjectEnum> cards;
@@ -22,20 +22,19 @@ namespace Script.core
         private void Awake()
         {
             instance = this;
-            GameManager.instance.GameStart.AddListener((() =>Init()));
         }
 
         public async UniTask Init()
         {
             for (var i = 0; i < cards.Count; i++)
             {
-                var o = await NetworkManager.InstantiateNetworkObject(cards[i],UIManager.instance.CardsParent);
+                var o = await InstantiateNetworkObject(cards[i],UIManager.instance.CardsParent);
                 m_cards.Add(o.GetComponent<Card>());
             }
         }
         public Card DrawCard()
         {
-            if(cards.Count==0)return null;
+            if(m_cards.Count==0)return null;
             var card = m_cards[0];
             cards.RemoveAt(0);
             return card;

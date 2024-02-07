@@ -21,6 +21,7 @@ namespace Script
         public NetworkObject networkObject;
         private void Awake()
         {
+            
         }
     }
 }

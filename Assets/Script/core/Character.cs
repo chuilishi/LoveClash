@@ -18,7 +18,6 @@ namespace Script.core
         public abstract int 上头值 { get; set; }
 
         #endregion
-
         #region 打牌
 
         public abstract UniTask PlayCard(Card card, List<NetworkObject> targets);
@@ -29,6 +28,5 @@ namespace Script.core
         public abstract List<Card> DrawCard(List<int> indexes);
 
         #endregion
-
     }
 }

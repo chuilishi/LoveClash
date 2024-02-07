@@ -12,6 +12,7 @@ using Script.core;
 using Script.Manager;
 using TMPro;
 using UnityEngine;
+using NetworkUtility = Script.Manager.NetworkUtility;
 
 #endregion
 
@@ -20,17 +21,15 @@ namespace Script.Network
     public class NetworkManager : MonoBehaviour
     {
         #region 变量
-
         public string IPAddress = "127.0.0.1";
 
         //服务器根据端口识别是receiver还是sender
-        public int receiverPort = 7777;
-        public int senderPort = 7778;
-        public static TcpClient receiverClient;
-        public static TcpClient senderClient;
+        public int receiverPort = 7778;
+        public int senderPort = 7779;
+        public TcpClient receiverClient;
+        public TcpClient senderClient;
         public int roomId = 00000;
         public string userName = "Admin";
-
         
         public static NetworkManager instance;
 
@@ -38,7 +37,17 @@ namespace Script.Network
 
         private List<Operation> operations = new List<Operation>();
 
-        public static PlayerEnum playerEnum = PlayerEnum.NotReady;
+        public static PlayerEnum _playerEnum = PlayerEnum.NotReady;
+
+        public static PlayerEnum playerEnum
+        {
+            get => _playerEnum;
+            set
+            {
+                _playerEnum = value;
+                Debug.Log("Playerenum是"+value);
+            }
+        }
 
         private static CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -46,20 +55,18 @@ namespace Script.Network
 
         private void Awake()
         {
+            DontDestroyOnLoad(gameObject);
             instance = this;
+            //第一次连接 发送房间号
+            //Init() 在第一个场景中调用了
             senderClient = new TcpClient();
             receiverClient = new TcpClient();
-            //第一次连接 发送房间号
-            Init();
         }
-
         #region 持续接收message并交给Executor执行
 
         //TryConnect和Init都是Request  Init返回的是对手的Init Operation
-        private async void Init()
+        public async void Init()
         {
-            UniTask.WhenAll(NetworkUtility.Connect(senderClient, IPAddress, senderPort),
-                NetworkUtility.Connect(receiverClient, IPAddress, receiverPort));
             // await ConnectUI();
             var task1 = NetworkUtility.RequestAsync(senderClient,
                 JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: roomId.ToString())));
@@ -71,7 +78,6 @@ namespace Script.Network
             var s = await NetworkUtility.RequestAsync(receiverClient,
                 JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: roomId.ToString())));
             var operation = JsonUtility.FromJson<Operation>(s);
-            playerEnum = operation.playerEnum;
             //networkObjects的0和1是Player和Opponent
             Player.instance.networkId = playerEnum == PlayerEnum.Player1 ? 0 : 1;
             networkObjects[Player.instance.networkId] = Player.instance;
@@ -82,7 +88,7 @@ namespace Script.Network
             Debug.Log("开始游戏");
             //Request, 并且返回对手的Init信息
             var opponentInit = await NetworkUtility.RequestAsync(senderClient,
-                JsonUtility.ToJson(new Operation(OperationType.Init, playerEnum, extraMessage: userName)));
+                JsonUtility.ToJson(new Operation(OperationType.Init, extraMessage: userName)));
             operation = JsonUtility.FromJson<Operation>(opponentInit);
             UIManager.instance.通知板.gameObject.SetActive(true);
             UIManager.instance.通知板.GetComponentInChildren<TMP_Text>().text =
@@ -96,7 +102,6 @@ namespace Script.Network
             receiverClient.SendTimeout = 1000;
             GameManager.instance.Main();
         }
-
         /// <summary>
         /// 主要消息接收器
         /// </summary>
@@ -127,9 +132,8 @@ namespace Script.Network
                 {
                     Debug.Log(e);
                 }
-
                 //TODO 操作如何记录
-                OperationExecutor.Execute(operation);
+                OperationExecutor._operations.Enqueue(operation);
             }
         }
 
@@ -150,11 +154,13 @@ namespace Script.Network
         public static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum,
             Transform transform = null)
         {
-            var o = Instantiate(ObjectFactory.instance.nameToObject[objectEnum], transform);
-            string resp = await NetworkUtility.RequestAsync(senderClient,
-                JsonUtility.ToJson(new Operation(OperationType.CreateObject, playerEnum, baseNetworkObject: o)));
-            var baseNetworkObject = JsonUtility.FromJson<Operation>(resp).baseNetworkObject;
-            return baseNetworkObject;
+            string resp = await NetworkUtility.RequestAsync(instance.senderClient,
+                JsonUtility.ToJson(new Operation(OperationType.CreateObject,extraMessage:
+                    ((int)objectEnum).ToString()))); // extraMessage 发送的是自己的枚举的int值
+            var operation = JsonUtility.FromJson<Operation>(resp);
+            var no = InstantiateNetworkObjectLocal((ObjectEnum)int.Parse(operation.extraMessage), operation.baseNetworkId,
+                transform);
+            return no;
         }
 
         /// <summary>
@@ -170,13 +176,12 @@ namespace Script.Network
             networkObjects.Add(networkId, o);
             return o;
         }
-
         #endregion
 
 
         public static void CloseAll()
         {
-            NetworkUtility.CloseAll(receiverClient, senderClient);
+            NetworkUtility.CloseAll(instance.receiverClient,instance.senderClient);
         }
     }
 }

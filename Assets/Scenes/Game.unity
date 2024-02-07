@@ -507,6 +507,8 @@ GameObject:
   m_Component:
   - component: {fileID: 47592712}
   - component: {fileID: 47592711}
+  - component: {fileID: 47592714}
+  - component: {fileID: 47592713}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -526,6 +528,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fda58afbbef4085a822e3beaf7e70d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkId: -1
+  objectEnum: 0
   curPlayer: 1
   GameStart:
     m_PersistentCalls:
@@ -548,6 +552,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &47592713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47592710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9254a7bee4a3497fa4f96e94aabff85f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &47592714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47592710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a88cf0f8b9464dbb0b94017f586204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkId: -1
+  objectEnum: 0
 --- !u!1 &84161012
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,7 +754,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: -25}
+  m_AnchoredPosition: {x: -3.3, y: -1.1}
   m_SizeDelta: {x: 85.1025, y: 18.0974}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &161918285
@@ -747,10 +777,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Reconnect
+  m_text: "\u9000\u51FA\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6f4e89368a2acb54c995f871216f80ce, type: 2}
+  m_sharedMaterial: {fileID: -403201201608622049, guid: 6f4e89368a2acb54c995f871216f80ce, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -774,15 +804,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16.13
-  m_fontSizeBase: 16.13
+  m_fontSize: 39.26
+  m_fontSizeBase: 39.26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1962,6 +1992,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c210ec76cab14f1db838f5b4635c1694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkId: -1
+  objectEnum: 0
+  handCards: []
   "_\u5FC3\u52A8\u503C": 10
   "_\u4FE1\u4EFB\u503C": 10
   "_\u4E0A\u5934\u503C": 10
@@ -1977,6 +2010,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687f9a1e623d461e9a6de439929c2cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkId: -1
+  objectEnum: 0
   cards: 0000000001000000
 --- !u!114 &464477382
 MonoBehaviour:
@@ -1990,11 +2025,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb7691a5674b4289b7f1d7f1b071e428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkId: -1
+  objectEnum: 0
   handCards: []
-  playerEnum: 0
-  "_\u5FC3\u52A8\u503C": 0
-  "_\u4FE1\u4EFB\u503C": 0
-  "_\u4E0A\u5934\u503C": 0
+  "_\u5FC3\u52A8\u503C": 10
+  "_\u4FE1\u4EFB\u503C": 10
+  "_\u4E0A\u5934\u503C": 10
 --- !u!1 &464533178
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,11 +2079,12 @@ MonoBehaviour:
   m_cardInterval: 0
   cardInterval: 38.399998
   CardsParent: {fileID: 302846395}
-  battleField: {fileID: 984749279}
+  "\u65BD\u6CD5\u533A\u57DF": {fileID: 984749279}
   "\u901A\u77E5\u677F": {fileID: 454966674}
   "\u7269\u54C1\u6C60": {fileID: 982344073}
-  playerView: {fileID: 0}
-  opponentView: {fileID: 0}
+  "\u5F03\u724C\u5806": {fileID: 573845845}
+  playerView: {fileID: 7281713742645273857}
+  opponentView: {fileID: 1756679711}
 --- !u!1 &487964142
 GameObject:
   m_ObjectHideFlags: 0
@@ -4426,7 +4463,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5221,7 +5258,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1162, y: -171}
+  m_AnchoredPosition: {x: 1121, y: 554}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1553069629
@@ -5332,55 +5369,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.29, y: 2.1}
   m_EdgeRadius: 0
---- !u!1 &1557006990
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1557006991}
-  - component: {fileID: 1557006992}
-  m_Layer: 0
-  m_Name: NetworkManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1557006991
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1557006990}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1557006992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1557006990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5422fa503c8747a89e5c19232900b2e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IPAddress: 127.0.0.1
-  receiverPort: 7777
-  senderPort: 7778
-  roomId: 11111
-  userName: Admin
 --- !u!1 &1569669771
 GameObject:
   m_ObjectHideFlags: 0
@@ -7318,6 +7306,5 @@ SceneRoots:
   - {fileID: 982344074}
   - {fileID: 464477379}
   - {fileID: 464533180}
-  - {fileID: 1557006991}
   - {fileID: 1263390421}
   - {fileID: 47592712}
