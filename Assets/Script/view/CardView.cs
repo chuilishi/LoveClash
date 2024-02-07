@@ -53,35 +53,42 @@ namespace Script.view
             mainCamera = Camera.main;
             rectTransform = GetComponent<RectTransform>();
             _shine = transform.Find("Shine");
-        }
-        
-        private void Start()
-        {
             originPos = transform.position;
         }
+        
+        public async void PlayCard(CharacterView characterView)
+        {
+            ExecuteCard(GetComponent<Card>());
+            transform.parent = UIManager.instance.弃牌堆.transform;
+            active = false;
+            characterView.handCards.Remove(this);
+            await ResetPosition("onenddrag",UIManager.instance.弃牌堆.transform.position);
+        }
         #region 一些事件函数
-        public void OnPointerEnter(PointerEventData eventData)
+        public async void OnPointerEnter(PointerEventData eventData)
         {
             if (!active) return;
             if (_bigMode) return;
-            DOTween.Sequence()
-                .Join(transform.DOScale(Vector3.one*1.5f, 0.3f))
+            active = false;
+            _bigMode = true;
+            await DOTween.Sequence()
+                .Join(transform.DOScale(Vector3.one * 1.5f, 0.3f))
                 .Join(DOTween.To(() => transform.position,
                     value => transform.position = value,
-                    originPos + new Vector3(0, Screen.height*0.125f,0), 0.2f));
-            _bigMode = true;
+                    originPos + new Vector3(0, Screen.height * 0.125f, 0), 0.2f)).Play().ToUniTask();
+            active = true;
         }
         //设置并回到原位置(不传入就是回到原位置)
         public async UniTask ResetPosition(string s,Vector3? position = null)
         {
             Debug.Log(s);
             if (position != null)originPos = position.GetValueOrDefault();
+            Debug.Log(originPos);
             active = false;
             await DOTween.Sequence()
+                .Join(transform.DOMove(originPos,0.2f))
                 .Join(transform.DOScale(Vector3.one, 0.3f))
-                .Join(DOTween.To(() => transform.position,
-                    value => transform.position = value,
-                    originPos, 0.2f)).Play().ToUniTask();
+                .Play().ToUniTask();
             active = true;
         }
         public void OnBeginDrag(PointerEventData eventData)
@@ -93,7 +100,7 @@ namespace Script.view
         public void OnDrag(PointerEventData eventData)
         {
             if (!active) return;
-            transform.position = (Vector2)eventData.position + dragOffset;
+            transform.position = eventData.position + dragOffset;
         }
 
         public async void OnEndDrag(PointerEventData eventData)
@@ -102,23 +109,17 @@ namespace Script.view
             if (RectTransformUtility.RectangleContainsScreenPoint(UIManager.instance.施法区域.rectTransform,
                     eventData.position))
             {
-                ExecuteCard(GetComponent<Card>());
-                transform.parent = UIManager.instance.弃牌堆.transform;
-                await ResetPosition("onenddrag",UIManager.instance.弃牌堆.transform.position);
-                active = false;
+                PlayCard(UIManager.instance.playerView);
             }
             else
             {
-                active = false;
                 await ResetPosition("onenddrag2");
-                active = true;
             }
         }
         public async void OnPointerExit(PointerEventData eventData)
         {
             if(!active)return;
-            if (!_bigMode) return;
-            Debug.Log("PointerExit");
+            if (!_bigMode)return;
             _bigMode = false;
             active = false;
             await ResetPosition("onpointerExit");

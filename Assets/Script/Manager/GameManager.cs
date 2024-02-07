@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Script.Cards;
 using Script.core;
 using Script.Network;
 using Script.Skills;
@@ -21,14 +22,20 @@ namespace Script.Manager
         {
             instance = this;
         }
-        public UnityEvent GameStart;
-        //参数代表目前玩家是谁
-        public UnityEvent<PlayerEnum> TurnChange;
+        #region 一些事件
+
+        public static event Action<Card,PlayerEnum> cardEvent;
+        public static event Action<PlayerEnum> endTurnEvent;
+        public static event Action<IExecutable,PlayerEnum> skillEvent;
+
+        #endregion
         #region 游戏流程
-        public void Main()
+        public void Main(bool isOnline = true)
         {
-            if (NetworkManager.playerEnum == PlayerEnum.NotReady)
+            if (isOnline == false)
             {
+                NetworkManager.isOnline = false;
+                NetworkManager.playerEnum = PlayerEnum.NotReady;
                 Offline();
             }
             else
@@ -41,7 +48,11 @@ namespace Script.Manager
         /// </summary>
         private void Offline()
         {
-            
+            Execute(new Operation(OperationType.Skill,new DrawCardSkill()));
+            OperationExecutor.cardEvent += ((card, playerEnum) =>
+            {
+                Execute(new Operation(OperationType.Skill,new DrawCardSkill()));
+            });
         }
         /// <summary>
         /// 联机流程

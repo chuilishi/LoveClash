@@ -10,11 +10,11 @@ using Object = UnityEngine.Object;
 
 namespace Script.core
 {
-    public abstract class NetworkObject : MonoBehaviour
+    public abstract class NetworkObject : MonoBehaviour,INetworkObject
     {
-        [HideInInspector]
-        public int networkId = -1;
-        public ObjectEnum objectEnum;
+        public int networkId { get; set; } = -1;
+
+        public ObjectEnum objectEnum { get; set; }
 
         protected static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum,Transform transform = null)
         {
@@ -22,17 +22,12 @@ namespace Script.core
         }
         protected static void Execute(Operation operation)
         {
-            var task = NetworkUtility.RequestAsync(NetworkManager.instance.senderClient,JsonUtility.ToJson(operation));
-            task.GetAwaiter().OnCompleted((
-                () =>
-                {
-                    OperationExecutor._operations.Enqueue(JsonUtility.FromJson<Operation>(task.GetAwaiter().GetResult()));
-                }));
+            OperationExecutor.Execute(operation);
         }
 
         protected static void ExecuteCard(Card card,List<NetworkObject>targets=null)
         {
-            Execute(new Operation(OperationType.Card,baseNetworkObject: card,targetNetworkObjects: targets));
+            Execute(new Operation(OperationType.Card,baseObject: card,targetNetworkObjects: targets));
         }
 
         protected static void ExecuteSkill(IExecutable skill,List<NetworkObject>targets=null)

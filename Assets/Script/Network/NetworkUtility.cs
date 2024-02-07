@@ -93,35 +93,19 @@ namespace Script.Manager
         }
         public static async UniTask WriteAsync(TcpClient client,string value)
         {
-            try
-            {
-                Byte[] buffer = Encoding.UTF8.GetBytes(value);
-                //把一个代表数据长度的int写在前面
-                var bufferHead = BitConverter.GetBytes(buffer.Length);
-                byte[] bufferToBeSend = new byte[bufferHead.Length+buffer.Length];
-                Array.Copy(bufferHead,0,bufferToBeSend,0,bufferHead.Length);
-                Array.Copy(buffer,0,bufferToBeSend,bufferHead.Length,buffer.Length);
-                await client.GetStream().WriteAsync(bufferToBeSend,0,bufferToBeSend.Length);
-            }
-            catch (Exception e)
-            {
-                Debug.Log("发送失败"+e);
-                throw;
-            }
+            Byte[] buffer = Encoding.UTF8.GetBytes(value);
+            //把一个代表数据长度的int写在前面
+            var bufferHead = BitConverter.GetBytes(buffer.Length);
+            byte[] bufferToBeSend = new byte[bufferHead.Length+buffer.Length];
+            Array.Copy(bufferHead,0,bufferToBeSend,0,bufferHead.Length);
+            Array.Copy(buffer,0,bufferToBeSend,bufferHead.Length,buffer.Length);
+            await client.GetStream().WriteAsync(bufferToBeSend,0,bufferToBeSend.Length);
         }
         public static async UniTask<string> RequestAsync(TcpClient client,string value)
         {
             string s = "";
             WriteAsync(client,value);
-            try
-            {
-                s = await ReadAsync(client);
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-                throw;
-            }
+            s = await ReadAsync(client);
             return s;
         }
 

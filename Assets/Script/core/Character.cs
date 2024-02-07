@@ -4,13 +4,14 @@ using Cysharp.Threading.Tasks;
 using EasyButtons;
 using Script.Cards;
 using Script.Manager;
+using Script.view;
 using UnityEngine;
 
 namespace Script.core
 {
     public abstract class Character : NetworkObject
     {
-        public List<Card> handCards;
+        public List<CardView> handCards;
         #region 三个值
         
         public abstract int 心动值 { get; set; }

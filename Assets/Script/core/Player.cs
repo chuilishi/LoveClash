@@ -6,6 +6,7 @@ using EasyButtons;
 using Script.Cards;
 using Script.Manager;
 using Script.Network;
+using Script.view;
 using UnityEngine;
 using Random = System.Random;
 
@@ -113,7 +114,7 @@ namespace Script.core
             
             var values = Enum.GetValues(typeof(ObjectEnum));
             var card = await InstantiateNetworkObject((ObjectEnum)new Random().Next(values.Length), UIManager.instance.CardsParent);
-            UIManager.instance.playerView.DrawCard(card.GetComponent<Card>());
+            UIManager.instance.playerView.DrawCard(card.GetComponent<CardView>());
         }
         /// <summary>
         /// 抽指定Index, 0代表数组中最后一张牌(即实际牌堆顶的第一张)

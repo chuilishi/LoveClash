@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Script.core;
 using Script.Manager;
 using Script.Network;
 using TMPro;
@@ -22,10 +23,23 @@ public class Lobby : MonoBehaviour
     private async void Awake()
     {
         用户名Text.text = "Whoami";
-        开始游戏Button.onClick.AddListener(OnlineMode);
-        单机测试Button.onClick.AddListener(OfflineMode);
+        开始游戏Button.onClick.AddListener((() =>
+        {
+            Init();
+            SceneManager.LoadSceneAsync(1, LoadSceneMode.Single).GetAwaiter().OnCompleted((() =>
+            {
+                NetworkManager.instance.Init().GetAwaiter().OnCompleted((() => { GameManager.instance.Main(true);}));
+            }));
+        }));
+        单机测试Button.onClick.AddListener((() =>
+        {
+            SceneManager.LoadSceneAsync(1, LoadSceneMode.Single).GetAwaiter().OnCompleted((() =>
+            {
+                GameManager.instance.Main(false);
+            }));
+        }));
     }
-    private async void OnlineMode()
+    private async void Init()
     {
         Regex regex = new Regex(@"^\d{5}$");
         string s = 房间号Text.text.Substring(0, 房间号Text.text.Length - 1);
@@ -83,14 +97,25 @@ public class Lobby : MonoBehaviour
             开始游戏Text.text = "开始游戏";
             return;
         }
-        SceneManager.LoadSceneAsync(1, LoadSceneMode.Single).GetAwaiter().OnCompleted((() =>
-        {
-            NetworkManager.instance.Init();
-        }));
-    }
 
-    private async void OfflineMode()
-    {
-        
+        #region 第一次请求
+
+        var initResp = await NetworkUtility.RequestAsync(NetworkManager.instance.senderClient,
+            JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: NetworkManager.instance.roomId.ToString())));
+        var operation = JsonUtility.FromJson<Operation>(initResp);
+        if (operation.operationType == OperationType.Error)
+        {
+            开始游戏Text.text = "房间已满";
+            await UniTask.Delay(500,cancellationToken:cts.Token);
+            开始游戏Text.text = "开始游戏";
+            return;
+        }
+        else
+        {
+            NetworkManager.playerEnum = operation.playerEnum;
+        }
+        Debug.Log("开始游戏");
+
+        #endregion
     }
 }

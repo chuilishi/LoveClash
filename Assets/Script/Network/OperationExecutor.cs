@@ -14,9 +14,23 @@ namespace Script.Network
     /// <summary>
     /// 只负责执行,不关心网络
     /// </summary>
-    public class OperationExecutor : NetworkObject
+    public class OperationExecutor : MonoBehaviour
     {
         public static Queue<Operation> _operations = new Queue<Operation>();
+
+        #region 一些事件
+
+        public static event Action<Card,PlayerEnum> cardEvent;
+        public static event Action<PlayerEnum> endTurnEvent;
+        public static event Action<IExecutable,PlayerEnum> skillEvent;
+
+        #endregion
+
+        private void Start()
+        {
+            Main();
+        }
+
         /// <summary>
         /// 持续执行队列里的命令
         /// </summary>
@@ -36,18 +50,17 @@ namespace Script.Network
         /// <param name="operation"></param>
         public static void Execute(Operation operation)
         {
-            //单机
-            if (NetworkManager.playerEnum == PlayerEnum.NotReady)
+            if (!NetworkManager.isOnline)
             {
+                UnityEngine.Debug.Log("offline");
                 _operations.Enqueue(operation);
+                return;
             }
-            else // 联机
-            {
-                var task = NetworkUtility.RequestAsync(NetworkManager.instance.senderClient, JsonUtility.ToJson(operation));
-                task.GetAwaiter().OnCompleted((
-                    () => { _operations.Enqueue(JsonUtility.FromJson<Operation>(task.GetAwaiter().GetResult())); }));
-            }
+            var task = NetworkUtility.RequestAsync(NetworkManager.instance.senderClient, JsonUtility.ToJson(operation));
+            task.GetAwaiter().OnCompleted((
+                () => { _operations.Enqueue(JsonUtility.FromJson<Operation>(task.GetAwaiter().GetResult())); }));
         }
+        
         public async UniTask m_Execute(Operation operation)
         {
             switch (operation.operationType)
@@ -72,35 +85,34 @@ namespace Script.Network
 
         private static async UniTask EndTurn(Operation operation)
         {
-            GameManager.instance.TurnChange.Invoke(operation.playerEnum == PlayerEnum.Player1
-                ? PlayerEnum.Player2
-                : PlayerEnum.Player1);
+            endTurnEvent?.Invoke(operation.playerEnum);
         }
         
         private static async UniTask Card(Operation operation)
         {
+            cardEvent?.Invoke(((NetworkObject)operation.baseObject).GetComponent<Card>(),operation.playerEnum);
             if (operation.playerEnum == NetworkManager.playerEnum)
             {
-                await Player.instance.PlayCard(operation.baseNetworkObject.GetComponent<Card>(),
+                await Player.instance.PlayCard(((NetworkObject)operation.baseObject).GetComponent<Card>(),
                     operation.targetNetworkObjects);
             }
             else
             {
-                await Opponent.instance.PlayCard(operation.baseNetworkObject.GetComponent<Card>(),
+                await Opponent.instance.PlayCard(((NetworkObject)operation.baseObject).GetComponent<Card>(),
                     operation.targetNetworkObjects);
-                ExecuteSkill(new DrawCardSkill());
             }
         }
         //比如抽卡
         private async UniTask Skill(Operation operation)
         {
-            var type = Type.GetType(operation.extraMessage);
-            if (type == null)
+            //C#的奇怪写法 skill 代表强制转换后的对象
+            if (operation.baseObject is not IExecutable skill)
             {
                 UnityEngine.Debug.LogError($"名为{operation.extraMessage}的Skill的名称错误");
                 return;
             }
-            ((IExecutable)Activator.CreateInstance(type)).Execute(
+            skillEvent?.Invoke(skill,operation.playerEnum);
+            skill.Execute(
                 operation.playerEnum == NetworkManager.playerEnum ? Player.instance : Opponent.instance,
                 operation.targetNetworkObjects);
         }
@@ -120,7 +132,7 @@ namespace Script.Network
         {
             if (operation.playerEnum == NetworkManager.playerEnum)
             {
-                
+                UnityEngine.Debug.Log("服务器错误");
             }
         }
     }

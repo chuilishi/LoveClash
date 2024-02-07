@@ -36,19 +36,13 @@ namespace Script.Network
         public static Dictionary<int, NetworkObject> networkObjects = new();
 
         private List<Operation> operations = new List<Operation>();
+        
+        public static PlayerEnum playerEnum = PlayerEnum.NotReady;
 
-        public static PlayerEnum _playerEnum = PlayerEnum.NotReady;
-
-        public static PlayerEnum playerEnum
-        {
-            get => _playerEnum;
-            set
-            {
-                _playerEnum = value;
-                Debug.Log("Playerenum是"+value);
-            }
-        }
-
+        /// <summary>
+        /// 联机?
+        /// </summary>
+        public static bool isOnline = true;
         private static CancellationTokenSource cts = new CancellationTokenSource();
 
         #endregion
@@ -65,28 +59,20 @@ namespace Script.Network
         #region 持续接收message并交给Executor执行
 
         //TryConnect和Init都是Request  Init返回的是对手的Init Operation
-        public async void Init()
+        public async UniTask Init()
         {
             // await ConnectUI();
-            var task1 = NetworkUtility.RequestAsync(senderClient,
-                JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: roomId.ToString())));
-            task1.GetAwaiter().OnCompleted((() =>
-            {
-                var operation = JsonUtility.FromJson<Operation>(task1.GetAwaiter().GetResult());
-                playerEnum = operation.playerEnum;
-            }));
-            var s = await NetworkUtility.RequestAsync(receiverClient,
-                JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: roomId.ToString())));
-            var operation = JsonUtility.FromJson<Operation>(s);
+            var initResp = await NetworkUtility.RequestAsync(NetworkManager.instance.receiverClient,
+                JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: NetworkManager.instance.roomId.ToString())));
+            var operation = JsonUtility.FromJson<Operation>(initResp);
             //networkObjects的0和1是Player和Opponent
-            Player.instance.networkId = playerEnum == PlayerEnum.Player1 ? 0 : 1;
-            networkObjects[Player.instance.networkId] = Player.instance;
-            Opponent.instance.networkId = playerEnum == PlayerEnum.Player1 ? 1 : 0;
-            networkObjects[Opponent.instance.networkId] = Opponent.instance;
+            Player.instance.networkId = NetworkManager.playerEnum == PlayerEnum.Player1 ? 0 : 1;
+            NetworkManager.networkObjects[Player.instance.networkId] = Player.instance;
+            Opponent.instance.networkId = NetworkManager.playerEnum == PlayerEnum.Player1 ? 1 : 0;
+            NetworkManager.networkObjects[Opponent.instance.networkId] = Opponent.instance;
             // 等待server下达Init命令代表游戏开始
-            await NetworkUtility.ReadAsync(receiverClient);
-            Debug.Log("开始游戏");
-            //Request, 并且返回对手的Init信息
+            await NetworkUtility.ReadAsync(NetworkManager.instance.receiverClient);
+            
             var opponentInit = await NetworkUtility.RequestAsync(senderClient,
                 JsonUtility.ToJson(new Operation(OperationType.Init, extraMessage: userName)));
             operation = JsonUtility.FromJson<Operation>(opponentInit);
@@ -100,7 +86,6 @@ namespace Script.Network
             senderClient.SendTimeout = 1000;
             receiverClient.ReceiveTimeout = 1000;
             receiverClient.SendTimeout = 1000;
-            GameManager.instance.Main();
         }
         /// <summary>
         /// 主要消息接收器
@@ -154,6 +139,12 @@ namespace Script.Network
         public static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum,
             Transform transform = null)
         {
+            //单机
+            if (playerEnum == PlayerEnum.NotReady)
+            {
+                return InstantiateNetworkObjectLocal(objectEnum, networkObjects.Count,
+                    transform);
+            }
             string resp = await NetworkUtility.RequestAsync(instance.senderClient,
                 JsonUtility.ToJson(new Operation(OperationType.CreateObject,extraMessage:
                     ((int)objectEnum).ToString()))); // extraMessage 发送的是自己的枚举的int值

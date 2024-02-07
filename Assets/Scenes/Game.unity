@@ -528,15 +528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fda58afbbef4085a822e3beaf7e70d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkId: -1
-  objectEnum: 0
   curPlayer: 1
-  GameStart:
-    m_PersistentCalls:
-      m_Calls: []
-  TurnChange:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &47592712
 Transform:
   m_ObjectHideFlags: 0
@@ -576,8 +568,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31a88cf0f8b9464dbb0b94017f586204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkId: -1
-  objectEnum: 0
 --- !u!1 &84161012
 GameObject:
   m_ObjectHideFlags: 0
@@ -1992,8 +1982,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c210ec76cab14f1db838f5b4635c1694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkId: -1
-  objectEnum: 0
   handCards: []
   "_\u5FC3\u52A8\u503C": 10
   "_\u4FE1\u4EFB\u503C": 10
@@ -2010,8 +1998,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687f9a1e623d461e9a6de439929c2cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkId: -1
-  objectEnum: 0
   cards: 0000000001000000
 --- !u!114 &464477382
 MonoBehaviour:
@@ -2025,8 +2011,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb7691a5674b4289b7f1d7f1b071e428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkId: -1
-  objectEnum: 0
   handCards: []
   "_\u5FC3\u52A8\u503C": 10
   "_\u4FE1\u4EFB\u503C": 10
@@ -4697,56 +4681,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1214014190}
   m_CullTransparentMesh: 1
---- !u!1 &1263390419
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1263390421}
-  - component: {fileID: 1263390420}
-  m_Layer: 0
-  m_Name: ObjectFactory
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1263390420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263390419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa591dd8ee39418fa7a662a3631d4c94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nameToObject:
-    _serializedList:
-    - Key: 0
-      Value: {fileID: -5596448384558858581, guid: 1b574758f73de1040a02003bef760739, type: 3}
-    - Key: 1
-      Value: {fileID: 8084117949893129235, guid: 15d8b587ea04d3140b6aec01b828e866, type: 3}
---- !u!4 &1263390421
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263390419}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1272307475
 GameObject:
   m_ObjectHideFlags: 0
@@ -5940,6 +5874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b30538f905b0415b89bf8ba63abe15c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handCards: []
   "_\u5FC3\u52A8\u503C_": 10
   "_\u4FE1\u4EFB\u503C_": 10
   "_\u4E0A\u5934\u503C_": 10
@@ -6749,6 +6684,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 594825394}
   m_CullTransparentMesh: 1
+--- !u!1001 &1886448391525869104
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 506841920695763298, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_Name
+      value: ObjectFactory
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
 --- !u!224 &4086785195819606379
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7155,6 +7147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7878325635392c149bd8e2e0905d7a78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handCards: []
   "_\u5FC3\u52A8\u503C_": 10
   "_\u4FE1\u4EFB\u503C_": 10
   "_\u4E0A\u5934\u503C_": 10
@@ -7306,5 +7299,5 @@ SceneRoots:
   - {fileID: 982344074}
   - {fileID: 464477379}
   - {fileID: 464533180}
-  - {fileID: 1263390421}
+  - {fileID: 1886448391525869104}
   - {fileID: 47592712}
