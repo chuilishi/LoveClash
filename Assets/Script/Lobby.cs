@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Script.core;
 using Script.Manager;
@@ -28,14 +29,15 @@ public class Lobby : MonoBehaviour
     {
         asyncSceneInstance = Addressables.LoadSceneAsync("Game", LoadSceneMode.Single, false);
         用户名Text.text = "Whoami";
-        开始游戏Button.onClick.AddListener((() =>
-        {
-            Init();
-            asyncSceneInstance.Result.ActivateAsync().completed += operation => {NetworkManager.instance.Init().GetAwaiter().OnCompleted((() => { GameManager.instance.Main(true);})); };
-        }));
+        开始游戏Button.onClick.AddListener((Init));
         单机测试Button.onClick.AddListener((() =>
         {
-            asyncSceneInstance.Result.ActivateAsync().completed += operation => {GameManager.instance.Main(false); };
+            单机测试Button.onClick.RemoveAllListeners();
+            单机测试Button.GetComponentInChildren<TMP_Text>().text = "正在加载";
+            LoadScene().GetAwaiter().OnCompleted((() =>
+            {
+                asyncSceneInstance.Result.ActivateAsync().completed += operation => {GameManager.instance.Main(false); };
+            }));
         }));
     }
     private async void Init()
@@ -96,7 +98,10 @@ public class Lobby : MonoBehaviour
             开始游戏Text.text = "开始游戏";
             return;
         }
-
+        
+        开始游戏Button.onClick.RemoveAllListeners();
+        开始游戏Button.GetComponentInChildren<TMP_Text>().text = "加载场景中";
+        
         #region 第一次请求
 
         var initResp = await NetworkUtility.RequestAsync(NetworkManager.instance.senderClient,
@@ -105,6 +110,10 @@ public class Lobby : MonoBehaviour
         if (operation.operationType == OperationType.Error)
         {
             开始游戏Text.text = "房间已满";
+            开始游戏Button.onClick.AddListener((() =>
+            {
+                Init();
+            }));
             await UniTask.Delay(500,cancellationToken:cts.Token);
             开始游戏Text.text = "开始游戏";
             return;
@@ -112,7 +121,35 @@ public class Lobby : MonoBehaviour
         else
         {
             NetworkManager.playerEnum = operation.playerEnum;
+            LoadScene().GetAwaiter().OnCompleted((() =>
+            {
+                NetworkManager.instance.Init().GetAwaiter()
+                    .OnCompleted((() => { GameManager.instance.Main(true); }));
+            }));
         }
-        #endregion
+        #endregion;
+    }
+
+    private Task LoadScene()
+    {
+        var tcs = new TaskCompletionSource<object>();
+        if (asyncSceneInstance.IsDone)
+        {
+            asyncSceneInstance.Result.ActivateAsync().completed += operation =>
+            {
+                tcs.SetResult(new object());
+            };
+        }
+        else
+        {
+            asyncSceneInstance.Completed += handle =>
+            {
+                handle.Result.ActivateAsync().completed += operation =>
+                {
+                    tcs.SetResult(new object());
+                };
+            };
+        }
+        return tcs.Task;
     }
 }
