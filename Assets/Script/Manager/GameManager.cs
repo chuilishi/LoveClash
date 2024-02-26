@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Script.Cards;
+using Script.Character;
 using Script.core;
 using Script.Network;
 using Script.Skills;
@@ -59,6 +60,13 @@ namespace Script.Manager
         /// </summary>
         private void Online()
         {
+            OperationExecutor.cardEvent += (card, @enum) =>
+            {
+                if (@enum != NetworkManager.playerEnum)
+                {
+                    ExecuteSkill(new DrawCardSkill());
+                }
+            };
             if(NetworkManager.playerEnum==PlayerEnum.Player1)ExecuteSkill(new DrawCardSkill());
         }
         public void EndGame()

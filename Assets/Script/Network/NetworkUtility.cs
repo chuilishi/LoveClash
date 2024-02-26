@@ -57,7 +57,7 @@ namespace Script.Manager
                 throw;
             }
         }
-
+        
         /// <summary>
         /// 两个都连接上的时候显示连接成功,顺便起到等待全部连接的功能
         /// </summary>
@@ -108,7 +108,7 @@ namespace Script.Manager
             s = await ReadAsync(client);
             return s;
         }
-
+        
         public static async UniTask<string> RequestAsync(string value)
         {
             var client = NetworkManager.instance.senderClient;
@@ -136,7 +136,22 @@ namespace Script.Manager
                 }
             }));
         }
-        
         #endregion
+#if (!UNITY_WEBGL||UNITY_EDITOR)
+        
+        //
+        // public static async UniTask<string> ReadAsync(WebSocket ws)
+        // {
+        //     
+        // }
+        //
+        // public static async UniTask<string> WriteAsync(WebSocket ws)
+        // {
+        //     string str = "http://xxx.xxx.xxx.xxx?xx";
+        //     var httpRequest = new HTTPRequest(new Uri(str)).Send();
+        //     
+        // }
+#endif
+        
     }
 }

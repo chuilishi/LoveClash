@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using Script.Character;
 using Script.core;
 using Script.Manager;
 using TMPro;
@@ -66,13 +67,12 @@ namespace Script.Network
                 JsonUtility.ToJson(new Operation(OperationType.TryConnectRoom, extraMessage: NetworkManager.instance.roomId.ToString())));
             var operation = JsonUtility.FromJson<Operation>(initResp);
             //networkObjects的0和1是Player和Opponent
-            Player.instance.networkId = NetworkManager.playerEnum == PlayerEnum.Player1 ? 0 : 1;
-            NetworkManager.networkObjects[Player.instance.networkId] = Player.instance;
+            Myself.instance.networkId = NetworkManager.playerEnum == PlayerEnum.Player1 ? 0 : 1;
+            NetworkManager.networkObjects[Myself.instance.networkId] = Myself.instance;
             Opponent.instance.networkId = NetworkManager.playerEnum == PlayerEnum.Player1 ? 1 : 0;
             NetworkManager.networkObjects[Opponent.instance.networkId] = Opponent.instance;
             // 等待server下达Init命令代表游戏开始
             await NetworkUtility.ReadAsync(NetworkManager.instance.receiverClient);
-            
             var opponentInit = await NetworkUtility.RequestAsync(senderClient,
                 JsonUtility.ToJson(new Operation(OperationType.Init, extraMessage: userName)));
             operation = JsonUtility.FromJson<Operation>(opponentInit);
@@ -81,6 +81,16 @@ namespace Script.Network
                 "your opponent is " + operation.extraMessage; //Init的extraMessage是username
             UniTask.Delay(3000).GetAwaiter()
                 .OnCompleted((() => { UIManager.instance.通知板.gameObject.SetActive(false); }));
+            var characterInfo = await NetworkUtility.RequestAsync(senderClient,
+                JsonUtility.ToJson(new Operation(OperationType.Init,
+                    extraMessage: string.Concat("Script.Character.",Myself.instance.characterName))));
+            Type type = Type.GetType(JsonUtility.FromJson<Operation>(characterInfo).extraMessage);
+            if(type==null) Debug.LogError("对方的角色名称错误");
+            else
+            {
+                var component = Opponent.instance.gameObject.AddComponent(type);
+                Opponent.instance.character = (CharacterBase)component;
+            }
             MessageReceiver();
             senderClient.ReceiveTimeout = 1000;
             senderClient.SendTimeout = 1000;

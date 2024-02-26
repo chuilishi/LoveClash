@@ -9,6 +9,9 @@ using Script.Manager;
 using Script.Network;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -19,24 +22,20 @@ public class Lobby : MonoBehaviour
     public TMP_Text 开始游戏Text;
     public Button 开始游戏Button;
     public Button 单机测试Button;
+    public AsyncOperationHandle<SceneInstance> asyncSceneInstance;
     private CancellationTokenSource cts = new CancellationTokenSource();
     private async void Awake()
     {
+        asyncSceneInstance = Addressables.LoadSceneAsync("Game", LoadSceneMode.Single, false);
         用户名Text.text = "Whoami";
         开始游戏Button.onClick.AddListener((() =>
         {
             Init();
-            SceneManager.LoadSceneAsync(1, LoadSceneMode.Single).GetAwaiter().OnCompleted((() =>
-            {
-                NetworkManager.instance.Init().GetAwaiter().OnCompleted((() => { GameManager.instance.Main(true);}));
-            }));
+            asyncSceneInstance.Result.ActivateAsync().completed += operation => {NetworkManager.instance.Init().GetAwaiter().OnCompleted((() => { GameManager.instance.Main(true);})); };
         }));
         单机测试Button.onClick.AddListener((() =>
         {
-            SceneManager.LoadSceneAsync(1, LoadSceneMode.Single).GetAwaiter().OnCompleted((() =>
-            {
-                GameManager.instance.Main(false);
-            }));
+            asyncSceneInstance.Result.ActivateAsync().completed += operation => {GameManager.instance.Main(false); };
         }));
     }
     private async void Init()
@@ -114,8 +113,6 @@ public class Lobby : MonoBehaviour
         {
             NetworkManager.playerEnum = operation.playerEnum;
         }
-        Debug.Log("开始游戏");
-
         #endregion
     }
 }

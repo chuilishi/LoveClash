@@ -5,6 +5,6 @@ namespace Script.core
 {
     public interface IExecutable
     {
-        public void Execute(Character character, List<NetworkObject> targets = null);
+        public void Execute(PlayerBase playerBase, List<NetworkObject> targets = null);
     }
 }

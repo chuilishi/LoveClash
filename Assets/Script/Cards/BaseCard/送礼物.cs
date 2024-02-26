@@ -2,22 +2,18 @@
 using System.Runtime.InteropServices;
 using Script.core;
 
-namespace Script.Cards
+namespace Script.Cards.BaseCard
 {
     /// <summary>
     /// 上头值+1, 心动值+1
     /// </summary>
-    public class 送礼物 : Card
+    public class 送礼物 : BaseCardBase
     {
-        public 送礼物() : base()
+        protected override void Awake()
         {
-            
-        }
-
-        public override void Execute(Character character,List<NetworkObject> targets = null)
-        {
-            character.上头值++;
-            character.心动值++;
+            base.Awake();
+            增加的上头值 = 1;
+            增加的心动值 = 1;
         }
     }
 }

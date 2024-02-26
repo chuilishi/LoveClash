@@ -30,7 +30,6 @@ namespace Script.Network
         {
             Main();
         }
-
         /// <summary>
         /// 持续执行队列里的命令
         /// </summary>
@@ -39,7 +38,6 @@ namespace Script.Network
             while (true)
             {
                 await UniTask.WaitUntil(() => _operations.Count != 0);
-                UnityEngine.Debug.Log("数量" + _operations.Count);
                 var operation = _operations.Dequeue();
                 await m_Execute(operation);
             }
@@ -87,18 +85,19 @@ namespace Script.Network
         {
             endTurnEvent?.Invoke(operation.playerEnum);
         }
-        
         private static async UniTask Card(Operation operation)
         {
-            cardEvent?.Invoke(((NetworkObject)operation.baseObject).GetComponent<Card>(),operation.playerEnum);
+            var o = (NetworkObject)operation.baseObject;
+            var card = o.GetComponent<Card>();
+            cardEvent?.Invoke(card,operation.playerEnum);
             if (operation.playerEnum == NetworkManager.playerEnum)
             {
-                await Player.instance.PlayCard(((NetworkObject)operation.baseObject).GetComponent<Card>(),
+                await Myself.instance.PlayCard(card,
                     operation.targetNetworkObjects);
             }
             else
             {
-                await Opponent.instance.PlayCard(((NetworkObject)operation.baseObject).GetComponent<Card>(),
+                await Opponent.instance.PlayCard(card,
                     operation.targetNetworkObjects);
             }
         }
@@ -113,7 +112,7 @@ namespace Script.Network
             }
             skillEvent?.Invoke(skill,operation.playerEnum);
             skill.Execute(
-                operation.playerEnum == NetworkManager.playerEnum ? Player.instance : Opponent.instance,
+                operation.playerEnum == NetworkManager.playerEnum ? Myself.instance : Opponent.instance,
                 operation.targetNetworkObjects);
         }
 

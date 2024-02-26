@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Remote
+  m_EditorClassIdentifier: 
+  m_GroupName: Remote
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 7e1c71865eea43f4187285492bebf922
+  m_SerializeEntries:
+  - m_GUID: 8e887a00ddc74364889ecfa2196667f6
+    m_Address: Game
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6d8cdd2d070981444ad43196ce81c11b
+    m_Address: CardPrefabs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d47ec026fbdf824dab6792346eb0423
+    m_Address: GameSceneBackground 1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34ae28f9bebb0b8499d4e68073713566
+    m_Address: "\u5F00\u59CB\u6E38\u620F"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d13a1190bb8ac9148b981c48611eb5b0
+    m_Address: Assets/Resources_moved/fontzipMin SDF.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6af34f799d359bf4bb782a10446f2e03
+    m_Address: Assets/Resources_moved/fontzipMin.ttc
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4b0251ea6a014643b30d244cf82ce51
+    m_Address: Assets/Shader/Sphere.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cea5da82a1865ee41b8978131b813bb5
+    m_Address: Assets/Materials/Shader/TestMat.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: c5cd8e65709c2cf4a91ef8b3a5cbbd8f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 740592f283ee6514e8a7c734d12d231d, type: 2}
+    - {fileID: 11400000, guid: fef661b6679154b488a90f7f59ddf180, type: 2}

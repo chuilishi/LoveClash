@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Script.Cards;
 using Script.Manager;
 using Script.Network;
+using Script.Skills;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
@@ -14,7 +15,7 @@ namespace Script.core
     {
         public int networkId { get; set; } = -1;
 
-        public ObjectEnum objectEnum { get; set; }
+        public ObjectEnum ObjectEnum { get; set; }
 
         protected static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum,Transform transform = null)
         {
@@ -25,14 +26,14 @@ namespace Script.core
             OperationExecutor.Execute(operation);
         }
 
-        protected static void ExecuteCard(Card card,List<NetworkObject>targets=null)
+        protected static void ExecuteCard(NetworkObject cardGameObject,List<NetworkObject>targets=null)
         {
-            Execute(new Operation(OperationType.Card,baseObject: card,targetNetworkObjects: targets));
+            Execute(new Operation(OperationType.Card,baseObject: cardGameObject,targetNetworkObjects: targets));
         }
 
         protected static void ExecuteSkill(IExecutable skill,List<NetworkObject>targets=null)
         {
-            Execute(new Operation(OperationType.Skill,targetNetworkObjects: targets,extraMessage:skill.GetType().FullName));
+            Execute(new Operation(OperationType.Skill,skill,targetNetworkObjects: targets));
         }
     }
 }

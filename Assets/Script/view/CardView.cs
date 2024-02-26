@@ -55,10 +55,9 @@ namespace Script.view
             _shine = transform.Find("Shine");
             originPos = transform.position;
         }
-        
         public async void PlayCard(CharacterView characterView)
         {
-            ExecuteCard(GetComponent<Card>());
+            ExecuteCard(this);
             transform.parent = UIManager.instance.弃牌堆.transform;
             active = false;
             characterView.handCards.Remove(this);
@@ -81,9 +80,7 @@ namespace Script.view
         //设置并回到原位置(不传入就是回到原位置)
         public async UniTask ResetPosition(string s,Vector3? position = null)
         {
-            Debug.Log(s);
             if (position != null)originPos = position.GetValueOrDefault();
-            Debug.Log(originPos);
             active = false;
             await DOTween.Sequence()
                 .Join(transform.DOMove(originPos,0.2f))

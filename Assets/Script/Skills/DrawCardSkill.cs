@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using Script.core;
 using Script.Network;
+using UnityEngine;
 
 namespace Script.Skills
 {
-    public class DrawCardSkill : IExecutable
+    public class DrawCardSkill : IExecutable 
     {
-        public void Execute(Character character, List<NetworkObject> targets = null)
+        public void Execute(PlayerBase playerBase, List<NetworkObject> targets = null)
         {
-            character.DrawCard();
+            Debug.Log("DrawcardSkill 执行了");
+            playerBase.DrawCard();
         }
     }
 }

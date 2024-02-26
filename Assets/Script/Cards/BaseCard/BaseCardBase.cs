@@ -13,16 +13,11 @@ namespace Script.Cards
         public int 增加的心动值;
         public int 增加的上头值;
         public int 增加的信任值;
-        public override void Execute(Character character, List<NetworkObject> targets = null)
+        public override void Execute(PlayerBase playerBase, List<NetworkObject> targets = null)
         {
-            character.心动值 += 增加的心动值;
-            character.上头值 += 增加的上头值;
-            character.信任值 += 增加的信任值;
-        }
-
-        protected override void Awake()
-        {
-            base.Awake();
+            playerBase.心动值 += 增加的心动值;
+            playerBase.上头值 += 增加的上头值;
+            playerBase.信任值 += 增加的信任值;
         }
     }
 }

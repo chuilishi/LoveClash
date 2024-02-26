@@ -45,7 +45,7 @@ namespace Script.Network
             //单独处理skill *注意如果自己定义了extraMessage会破坏skill的自动反序列化*
             if (operationType == OperationType.Skill)
             {
-                if(extraMessage!=null) Debug.LogError("Skill时候不能额外携带extraMessage,已经被覆盖");
+                if(!string.IsNullOrEmpty(extraMessage)) Debug.LogError("Skill时候不能额外携带extraMessage,已经被覆盖");
                 this.extraMessage = this.baseObject.GetType().FullName;
             }
             else

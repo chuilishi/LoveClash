@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Script.core
 {
-    public class Opponent : Character
+    public class Opponent : PlayerBase
     {
         public static Opponent instance;
 
@@ -70,8 +70,9 @@ namespace Script.core
 
         #endregion
         
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
             instance = this;
         }
 
@@ -80,21 +81,6 @@ namespace Script.core
             心动值 = _心动值;
             信任值 = _信任值;
             上头值 = _上头值;
-        }
-
-        public override async UniTask PlayCard(Card card, List<NetworkObject> targets)
-        {
-            card.Execute(this,targets);
-        }
-
-        public override void DrawCard()
-        {
-            
-        }
-
-        public override List<Card> DrawCard(List<int> indexes)
-        {
-            throw new NotImplementedException();
         }
     }
 }
