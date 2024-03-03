@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Script.Cards
 {
@@ -6,6 +7,6 @@ namespace Script.Cards
     public class CardSO : ScriptableObject
     {
         public Sprite sprite;
-        public Card card;
+        [FormerlySerializedAs("card")] public CardBase cardBase;
     }
 }

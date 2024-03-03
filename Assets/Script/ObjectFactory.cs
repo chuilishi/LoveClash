@@ -6,7 +6,6 @@ using Script.core;
 using Script.view;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Card = Script.Cards.Card;
 
 namespace Script
 {

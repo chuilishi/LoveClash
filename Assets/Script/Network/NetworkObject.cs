@@ -14,8 +14,7 @@ namespace Script.core
     public abstract class NetworkObject : MonoBehaviour,INetworkObject
     {
         public int networkId { get; set; } = -1;
-
-        public @string String { get; set; }
+        public string prefabName { get; set; }
 
         protected static async UniTask<NetworkObject> InstantiateNetworkObject(string prefabName,Transform transform = null)
         {

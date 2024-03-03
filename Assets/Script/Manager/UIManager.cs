@@ -28,6 +28,7 @@ namespace Script.Manager
         [Header("通知版")] public GameObject 通知板;
         [Header("物品池")] public GameObject 物品池;
         [Header("弃牌堆")] public GameObject 弃牌堆;
+        [Header("回合结束")] public Button 回合结束;
         #endregion
 
         #region 一些核心引用
@@ -42,6 +43,10 @@ namespace Script.Manager
             cardInterval = Screen.width * 0.1f;
             通知板.gameObject.SetActive(false);
             DontDestroyOnLoad(gameObject);
+            回合结束.onClick.AddListener(() =>
+            {
+                OperationExecutor.EndTurnEvent.Invoke(PlayerEnum.Player1);
+            });
         }
     }
 }

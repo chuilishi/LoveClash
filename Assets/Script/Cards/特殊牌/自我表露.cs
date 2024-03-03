@@ -15,7 +15,7 @@ public class 自我表露: SpecialCardBase
     int roundCount = 3;
     public override void Execute(PlayerBase player,List<NetworkObject> targets = null)
     {
-        OperationExecutor.endTurnEvent += func;
+        OperationExecutor.EndTurnEvent.AddListener(func);
     }
     private void func(PlayerEnum playerEnum)
     {
@@ -32,7 +32,7 @@ public class 自我表露: SpecialCardBase
                 {
                     Myself.instance.信任值 -= 5;
                 }
-                OperationExecutor.endTurnEvent -= func;
+                OperationExecutor.EndTurnEvent.RemoveListener(func);
             }
         }
     }

@@ -104,7 +104,7 @@ namespace Script.core
         /// </summary>
         /// <param name="num"></param>
         /// <returns></returns>
-        public override async UniTask<Card> DrawCard()
+        public override async UniTask<CardBase> DrawCard()
         {
             //这是牌库版本的老代码 
             // var card = Deck.instance.DrawCard();

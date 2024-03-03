@@ -25,7 +25,7 @@ namespace Script.Manager
         }
         #region 一些事件
 
-        public static event Action<Card,PlayerEnum> cardEvent;
+        public static event Action<CardBase,PlayerEnum> cardEvent;
         public static event Action<PlayerEnum> endTurnEvent;
         public static event Action<IExecutable,PlayerEnum> skillEvent;
 
@@ -50,23 +50,24 @@ namespace Script.Manager
         private void Offline()
         {
             Execute(new Operation(OperationType.Skill,new DrawCardSkill()));
-            OperationExecutor.cardEvent += ((card, playerEnum) =>
+            OperationExecutor.CardEvent.AddListener((card, playerEnum) =>
             {
                 Execute(new Operation(OperationType.Skill,new DrawCardSkill()));
             });
+            
         }
         /// <summary>
         /// 联机流程
         /// </summary>
         private void Online()
         {
-            OperationExecutor.cardEvent += (card, @enum) =>
+            OperationExecutor.CardEvent.AddListener(((card, playerEnum) =>
             {
-                if (@enum != NetworkManager.playerEnum)
+                if (playerEnum != NetworkManager.playerEnum)
                 {
                     ExecuteSkill(new DrawCardSkill());
                 }
-            };
+            }));
             if(NetworkManager.playerEnum==PlayerEnum.Player1)ExecuteSkill(new DrawCardSkill());
         }
         public void EndGame()

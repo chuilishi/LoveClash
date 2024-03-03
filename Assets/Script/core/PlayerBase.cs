@@ -30,14 +30,14 @@ namespace Script.core
                
         }
 
-        public virtual async UniTask PlayCard(Card card,List<NetworkObject> targets)
+        public virtual async UniTask PlayCard(CardBase cardBase,List<NetworkObject> targets)
         {
-             character.PlayCard(card, targets);
+             character.PlayCard(cardBase, targets);
         }
         
         #region 抽卡
 
-        public virtual async UniTask<Card> DrawCard()
+        public virtual async UniTask<CardBase> DrawCard()
         {
             return await character.DrawCard();
         }

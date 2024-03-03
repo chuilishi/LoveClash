@@ -14,17 +14,16 @@ namespace Script.Character
 {
     public abstract class CharacterBase : MonoBehaviour
     {
-        public abstract void PlayCard(Card card, List<NetworkObject> targets);
+        public abstract void PlayCard(CardBase cardBase, List<NetworkObject> targets);
         #region 抽卡
-
         //异步是因为暂时是
-        public virtual async UniTask<Card> DrawCard()
+        public virtual async UniTask<CardBase> DrawCard()
         {
             //选择<string,Object>字典中的某个随机key
             var randomPrefabName = ObjectFactory.instance.nameToObject.Keys.ToArray()[new Random().Next(0, ObjectFactory.instance.nameToObject.Count)];
             var card = await NetworkManager.InstantiateNetworkObject(randomPrefabName, UIManager.instance.CardsParent);
             UIManager.instance.playerView.DrawCard(card.GetComponent<CardView>());
-            return card as Card;
+            return card as CardBase;
         }
         #endregion
     }

@@ -8,6 +8,8 @@ using Script.Manager;
 using Script.Skills;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
+using Object = System.Object;
 
 namespace Script.Network
 {
@@ -20,9 +22,9 @@ namespace Script.Network
 
         #region 一些事件
 
-        public static event Action<Card,PlayerEnum> cardEvent;
-        public static event Action<PlayerEnum> endTurnEvent;
-        public static event Action<IExecutable,PlayerEnum> skillEvent;
+        public static UnityEvent<CardBase,PlayerEnum> CardEvent;
+        public static UnityEvent<PlayerEnum> EndTurnEvent;
+        public static UnityEvent<IExecutable,PlayerEnum> SkillEvent;
 
         #endregion
 
@@ -83,13 +85,13 @@ namespace Script.Network
 
         private static async UniTask EndTurn(Operation operation)
         {
-            endTurnEvent?.Invoke(operation.playerEnum);
+            EndTurnEvent?.Invoke(operation.playerEnum);
         }
         private static async UniTask Card(Operation operation)
         {
             var o = (NetworkObject)operation.baseObject;
-            var card = o.GetComponent<Card>();
-            cardEvent?.Invoke(card,operation.playerEnum);
+            var card = o.GetComponent<CardBase>();
+            CardEvent?.Invoke(card,operation.playerEnum);
             if (operation.playerEnum == NetworkManager.playerEnum)
             {
                 await Myself.instance.PlayCard(card,
@@ -110,7 +112,7 @@ namespace Script.Network
                 UnityEngine.Debug.LogError($"名为{operation.extraMessage}的Skill的名称错误");
                 return;
             }
-            skillEvent?.Invoke(skill,operation.playerEnum);
+            SkillEvent?.Invoke(skill,operation.playerEnum);
             skill.Execute(
                 operation.playerEnum == NetworkManager.playerEnum ? Myself.instance : Opponent.instance,
                 operation.targetNetworkObjects);

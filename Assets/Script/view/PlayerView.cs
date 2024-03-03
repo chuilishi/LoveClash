@@ -20,7 +20,7 @@ namespace Script.view
         /// 抽Cards.Card入手牌
         /// </summary>
         /// <param name="cards"></param>
-        public void DrawCard(List<Cards.Card>cards)
+        public void DrawCard(List<Cards.CardBase>cards)
         {
             if (cards.Count == 0)
             {

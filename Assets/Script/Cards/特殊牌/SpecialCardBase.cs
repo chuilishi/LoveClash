@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Script.Cards
 {
-    public abstract  class SpecialCardBase: Card
+    public abstract class SpecialCardBase: CardBase
     {
         
     }

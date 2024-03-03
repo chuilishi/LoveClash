@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Script.Cards
 {
     [Serializable]
-    public abstract class Card : NetworkObject,IExecutable
+    public abstract class CardBase : NetworkObject,IExecutable
     {
         public Sprite cardImage;
         [HideInInspector]

@@ -3,6 +3,6 @@
     public interface INetworkObject
     {
         public int networkId { get; set; }
-        public @string String { get; set; }
+        public string prefabName { get; set; }
     }
 }

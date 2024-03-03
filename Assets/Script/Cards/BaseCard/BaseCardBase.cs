@@ -7,7 +7,7 @@ namespace Script.Cards
     /// <summary>
     /// 基础卡
     /// </summary>
-    public class BaseCardBase : Card
+    public class BaseCardBase : CardBase
     {
         //使用这个牌能加上的值
         public int 增加的心动值;
