@@ -9,9 +9,6 @@ using Object = System.Object;
 
 namespace Script.Network
 {
-    /// <summary>
-    /// operation 中的所有东西都能
-    /// </summary>
     [Serializable]
     public class Operation : ISerializationCallbackReceiver
     {

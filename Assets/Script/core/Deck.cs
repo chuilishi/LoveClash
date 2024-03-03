@@ -14,7 +14,7 @@ namespace Script.core
     public class Deck : NetworkObject
     {
         [Header("牌库中的卡")]
-        public List<ObjectEnum> cards;
+        public List<string> cards;
 
         private List<Card> m_cards = new List<Card>();
         public static Deck instance;

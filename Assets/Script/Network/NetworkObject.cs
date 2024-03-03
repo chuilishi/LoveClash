@@ -15,11 +15,11 @@ namespace Script.core
     {
         public int networkId { get; set; } = -1;
 
-        public ObjectEnum ObjectEnum { get; set; }
+        public @string String { get; set; }
 
-        protected static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum,Transform transform = null)
+        protected static async UniTask<NetworkObject> InstantiateNetworkObject(string prefabName,Transform transform = null)
         {
-            return await NetworkManager.InstantiateNetworkObject(objectEnum, transform);
+            return await NetworkManager.InstantiateNetworkObject(prefabName, transform);
         }
         protected static void Execute(Operation operation)
         {

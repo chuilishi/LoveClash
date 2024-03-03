@@ -13,13 +13,13 @@ namespace Script
     public class ObjectFactory : MonoBehaviour
     {
         public static ObjectFactory instance;
-        public SerializedDictionary<ObjectEnum,NetworkObject> nameToObject = new SerializedDictionary<ObjectEnum, NetworkObject>();
+        public SerializedDictionary<string,NetworkObject> nameToObject = new SerializedDictionary<string, NetworkObject>();
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
             instance = this;
         }
-        public NetworkObject GetObject(ObjectEnum prefabName)
+        public NetworkObject GetObject(string prefabName)
         {
             nameToObject.TryGetValue(prefabName, out var value);
             if (value != null)

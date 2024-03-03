@@ -3,16 +3,11 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using Script.core;
 using Script.Manager;
 using Script.Network;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -23,21 +18,19 @@ public class Lobby : MonoBehaviour
     public TMP_Text 开始游戏Text;
     public Button 开始游戏Button;
     public Button 单机测试Button;
-    public AsyncOperationHandle<SceneInstance> asyncSceneInstance;
     private CancellationTokenSource cts = new CancellationTokenSource();
     private async void Awake()
     {
-        asyncSceneInstance = Addressables.LoadSceneAsync("Game", LoadSceneMode.Single, false);
         用户名Text.text = "Whoami";
         开始游戏Button.onClick.AddListener((Init));
         单机测试Button.onClick.AddListener((() =>
         {
             单机测试Button.onClick.RemoveAllListeners();
             单机测试Button.GetComponentInChildren<TMP_Text>().text = "正在加载";
-            LoadScene().GetAwaiter().OnCompleted((() =>
+            SceneManager.LoadSceneAsync(1).completed += operation =>
             {
-                asyncSceneInstance.Result.ActivateAsync().completed += operation => {GameManager.instance.Main(false); };
-            }));
+                GameManager.instance.Main(false);
+            };
         }));
     }
     private async void Init()
@@ -121,35 +114,13 @@ public class Lobby : MonoBehaviour
         else
         {
             NetworkManager.playerEnum = operation.playerEnum;
-            LoadScene().GetAwaiter().OnCompleted((() =>
+            SceneManager.LoadSceneAsync(1).completed += asyncOperation =>
             {
                 NetworkManager.instance.Init().GetAwaiter()
                     .OnCompleted((() => { GameManager.instance.Main(true); }));
-            }));
+            };
         }
         #endregion;
     }
 
-    private Task LoadScene()
-    {
-        var tcs = new TaskCompletionSource<object>();
-        if (asyncSceneInstance.IsDone)
-        {
-            asyncSceneInstance.Result.ActivateAsync().completed += operation =>
-            {
-                tcs.SetResult(new object());
-            };
-        }
-        else
-        {
-            asyncSceneInstance.Completed += handle =>
-            {
-                handle.Result.ActivateAsync().completed += operation =>
-                {
-                    tcs.SetResult(new object());
-                };
-            };
-        }
-        return tcs.Task;
-    }
 }

@@ -146,20 +146,20 @@ namespace Script.Network
         /// <summary>
         /// 申请创建NetworkObject, 代替Instantiate, 返回的baseNetworkObject中附带了新的networkId
         /// </summary>
-        public static async UniTask<NetworkObject> InstantiateNetworkObject(ObjectEnum objectEnum,
+        public static async UniTask<NetworkObject> InstantiateNetworkObject(string prefabName,
             Transform transform = null)
         {
             //单机
             if (playerEnum == PlayerEnum.NotReady)
             {
-                return InstantiateNetworkObjectLocal(objectEnum, networkObjects.Count,
+                return InstantiateNetworkObjectLocal(prefabName, networkObjects.Count,
                     transform);
             }
             string resp = await NetworkUtility.RequestAsync(instance.senderClient,
                 JsonUtility.ToJson(new Operation(OperationType.CreateObject,extraMessage:
-                    ((int)objectEnum).ToString()))); // extraMessage 发送的是自己的枚举的int值
+                    prefabName))); // extraMessage 发送的是物体的名字
             var operation = JsonUtility.FromJson<Operation>(resp);
-            var no = InstantiateNetworkObjectLocal((ObjectEnum)int.Parse(operation.extraMessage), operation.baseNetworkId,
+            var no = InstantiateNetworkObjectLocal(operation.extraMessage, operation.baseNetworkId,
                 transform);
             return no;
         }
@@ -168,11 +168,11 @@ namespace Script.Network
         /// 对方申请创建物体, 在本地创建
         /// </summary>
         /// <returns></returns>
-        public static NetworkObject InstantiateNetworkObjectLocal(ObjectEnum objectEnum, int networkId,
+        public static NetworkObject InstantiateNetworkObjectLocal(string prefabName, int networkId,
             Transform transform = null)
         {
             if (networkObjects.ContainsKey(networkId)) return networkObjects[networkId];
-            var o = Instantiate(ObjectFactory.instance.nameToObject[objectEnum], transform);
+            var o = Instantiate(ObjectFactory.instance.nameToObject[prefabName], transform);
             o.networkId = networkId;
             networkObjects.Add(networkId, o);
             return o;

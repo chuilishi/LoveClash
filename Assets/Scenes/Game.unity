@@ -2870,7 +2870,7 @@ PrefabInstance:
     - target: {fileID: 4437195122264658357, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
       propertyPath: nameToObject._serializedList.Array.data[1].Value
       value: 
-      objectReference: {fileID: 2751426941281561575, guid: 15d8b587ea04d3140b6aec01b828e866, type: 3}
+      objectReference: {fileID: 2751426941281561575, guid: 5321b503344591e4eb4a08516127988c, type: 3}
     - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6717,6 +6717,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ObjectFactory
       objectReference: {fileID: 0}
+    - target: {fileID: 4437195122264658357, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
+      propertyPath: nameToObject._serializedList.Array.data[1].Value
+      value: 
+      objectReference: {fileID: 2751426941281561575, guid: 5321b503344591e4eb4a08516127988c, type: 3}
     - target: {fileID: 5335542021019838565, guid: 05c78860c750d7544af5028ba9af2c38, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

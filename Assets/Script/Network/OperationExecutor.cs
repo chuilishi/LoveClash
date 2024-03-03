@@ -118,7 +118,7 @@ namespace Script.Network
 
         private static async UniTask CreateObject(Operation operation)
         {
-            NetworkManager.InstantiateNetworkObjectLocal((ObjectEnum)int.Parse(operation.extraMessage),
+            NetworkManager.InstantiateNetworkObjectLocal(operation.extraMessage,
                 operation.baseNetworkId, UIManager.instance.物品池.transform);
         }
 

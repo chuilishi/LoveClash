@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Script.Cards;
 using Script.core;
@@ -19,9 +20,9 @@ namespace Script.Character
         //异步是因为暂时是
         public virtual async UniTask<Card> DrawCard()
         {
-            Debug.Log("角色抽卡了");
-            var values = Enum.GetValues(typeof(ObjectEnum));
-            var card = await NetworkManager.InstantiateNetworkObject((ObjectEnum)new Random().Next(values.Length), UIManager.instance.CardsParent);
+            //选择<string,Object>字典中的某个随机key
+            var randomPrefabName = ObjectFactory.instance.nameToObject.Keys.ToArray()[new Random().Next(0, ObjectFactory.instance.nameToObject.Count)];
+            var card = await NetworkManager.InstantiateNetworkObject(randomPrefabName, UIManager.instance.CardsParent);
             UIManager.instance.playerView.DrawCard(card.GetComponent<CardView>());
             return card as Card;
         }

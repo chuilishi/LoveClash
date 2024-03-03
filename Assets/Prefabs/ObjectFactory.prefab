@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameToObject:
     _serializedList:
-    - Key: 0
+    - Key: "\u55B7\u9999\u6C34"
       Value: {fileID: -5596448384558858581, guid: 1b574758f73de1040a02003bef760739, type: 3}
-    - Key: 1
-      Value: {fileID: 2751426941281561575, guid: 15d8b587ea04d3140b6aec01b828e866, type: 3}
+    - Key: "\u9001\u793C\u7269"
+      Value: {fileID: 2751426941281561575, guid: 5321b503344591e4eb4a08516127988c, type: 3}
