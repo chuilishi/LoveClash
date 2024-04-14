@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Script.core;
+using Script.Manager;
+using Script.Network;
+using Script.view;
+
+namespace Script.Character
+{
+    /// <summary>
+    /// 随机抽Minion 用来测试
+    /// </summary>
+    public class RandomMinionCharacter : CharacterBase
+    {
+        public override void PlayCard(int card, List<int> targets)
+        {
+            //TODO 单机
+            card.ToNetworkObject().GetComponent<EffectTrigger>().TriggerEffects(targets);
+        }
+        public override async UniTask<NetworkObject> DrawCard()
+        {
+            var randomCardName = ObjectFactory.Instance.allMinionsName[new Random().Next(0, ObjectFactory.Instance.allMinionsName.Count)];
+            var card = await NetworkManager.InstantiateNetworkObject(randomCardName, UIManager.instance.CardsParent);
+            UIManager.instance.myselfView.DrawCard(card.GetComponent<ICardView>());
+            return card;
+        }
+    }
+}
